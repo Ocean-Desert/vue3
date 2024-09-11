@@ -1,0 +1,21 @@
+.userInfoHeader {
+  display: flex;
+  height: 204px;
+  background: url('../../assets/user-info-back.jpg') no-repeat;
+  background-size: cover;
+  color: var(--gray-10);
+  border-radius: 4px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.userInfoPanel {
+  background: var(--color-bg-2);
+  border-radius: 4px;
+  padding: 20px 0 0 20px;
+  min-height: 580px;
+}
+.userInfoForm {
+  width: 580px;
+  margin: 0 auto;
+}

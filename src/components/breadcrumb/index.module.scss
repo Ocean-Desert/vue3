@@ -1,0 +1,13 @@
+.containerBreadcrumb {
+  margin: 16px 0;
+
+  :global {
+    .arco-breadcrumb-item {
+      color: rgb(var(--gray-6));
+
+      &:last-child {
+        color: rgb(var(--gray-8));
+      }
+    }
+  }
+}

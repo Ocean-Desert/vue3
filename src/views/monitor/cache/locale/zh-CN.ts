@@ -1,0 +1,23 @@
+export default {
+  'cache.list.369138-0': '序号',
+  'cache.list.369138-1': '缓存名称',
+  'cache.list.369138-2': '备注',
+  'cache.list.369138-3': '操作',
+  'cache.list.369138-4': '缓存键名',
+  'cache.list.369138-5': '清理缓存键名[{label}]成功',
+  'cache.list.369138-6': '清理缓存键名[{label}]失败',
+  'cache.list.369138-7': '清理缓存名称[{label}]成功',
+  'cache.list.369138-8': '清理缓存名称[{label}]失败',
+  'cache.list.369138-9': '您的浏览器不支持剪贴板',
+  'cache.list.369138-10': '复制成功',
+  'cache.list.369138-11': '刷新缓存列表成功',
+  'cache.list.369138-12': '刷新键名列表成功',
+  'cache.list.369138-13': '缓存列表',
+  'cache.list.369138-14': '键名列表',
+  'cache.list.369138-15': '缓存内容',
+  'cache.list.369138-16': '取消',
+  'cache.list.369138-17': '是否清空所有缓存数据',
+  'cache.list.369138-18': '确定',
+  'cache.list.369138-19': '清空所有缓存',
+  'cache.list.369138-20': '复制缓存内容'
+}

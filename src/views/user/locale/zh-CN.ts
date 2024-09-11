@@ -1,0 +1,27 @@
+export default {
+  'user.index.776470-0': '所属部门',
+  'user.index.776470-1': '性别',
+  'user.index.776470-2': '用户ID',
+  'user.index.776470-3': '手机号码',
+  'user.index.776470-4': '注册时间',
+  'user.index.776470-5': '当前浏览器不支持此功能',
+  'user.index.776470-6': '基础信息',
+  'user.index.776470-7': '修改密码',
+
+  'components.basic-information.931986-0': '昵称',
+  'components.basic-information.931986-1': '请输入昵称',
+  'components.basic-information.931986-2': '性别',
+  'components.basic-information.931986-3': '请选择性别',
+  'components.basic-information.931986-4': '手机号码',
+  'components.basic-information.931986-5': '请输入手机号码',
+  'components.basic-information.931986-6': '请输入正确的手机号码',
+
+  'components.security-settings.051975-0': '旧密码',
+  'components.security-settings.051975-1': '请输入旧密码',
+  'components.security-settings.051975-2': '新密码',
+  'components.security-settings.051975-3': '请输入密码',
+  'components.security-settings.051975-4': '至少六位数密码',
+  'components.security-settings.051975-5': '确认密码',
+  'components.security-settings.051975-6': '请确认密码',
+  'components.security-settings.051975-7': '两个密码不匹配',
+}

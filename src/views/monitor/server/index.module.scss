@@ -1,0 +1,75 @@
+.listBetween {
+  .label {
+    color: var(--color-text-1);
+    font-weight: 700;
+    flex: 1;
+  }
+
+  .value {
+    color: var(--color-text-3);
+    max-width: 50%;
+    text-align: right;
+  }
+
+  :global {
+    .arco-list-item-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+}
+
+.diskBody {
+  color: var(--color-text-3);
+  text-align: center;
+}
+
+.diskHead {
+  text-align: center;
+  color: var(--color-text-1);
+  font-weight: 700;
+}
+
+.networkBox {
+  display: flex;
+  justify-content: space-around;
+
+
+  .networkItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    .networkTitle {
+      color: var(--color-text-1);
+      font-size: 16px;
+    }
+
+    .networkValue {
+      color: var(--color-text-2);
+    }
+  }
+}
+
+.statusBox {
+  display: flex;
+  justify-content: space-around;
+
+  .statusItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    .statusTitle {
+      color: var(--color-text-1);
+      font-weight: 700;
+    }
+
+    .statusDesc {
+      color: var(--color-text-3);
+    }
+  }
+}

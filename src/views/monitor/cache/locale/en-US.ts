@@ -1,0 +1,23 @@
+export default {
+  'cache.list.369138-0': 'Serial number',
+  'cache.list.369138-1': 'Cache Name',
+  'cache.list.369138-2': 'remarks',
+  'cache.list.369138-3': 'operation',
+  'cache.list.369138-4': 'Cache key names',
+  'cache.list.369138-5': 'Clear cache key names[{label}]Success',
+  'cache.list.369138-6': 'Clear cache key names[{label}]Failed',
+  'cache.list.369138-7': 'Clear cache name [{label}] Success',
+  'cache.list.369138-8': 'Clear cache name [{label}] Failed',
+  'cache.list.369138-9': 'Your browser does not support clipboard',
+  'cache.list.369138-10': 'Copy successful',
+  'cache.list.369138-11': 'Refresh cache list successfully',
+  'cache.list.369138-12': 'Refresh key name list successfully',
+  'cache.list.369138-13': 'Cache List',
+  'cache.list.369138-14': 'Key Name List',
+  'cache.list.369138-15': 'Cache content',
+  'cache.list.369138-16': 'cancel',
+  'cache.list.369138-17': 'Do you want to clear all cached data',
+  'cache.list.369138-18': 'determine',
+  'cache.list.369138-19': 'Clear all caches',
+  'cache.list.369138-20': 'Copy cached content'
+}

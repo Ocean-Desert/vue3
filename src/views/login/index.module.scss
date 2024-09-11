@@ -1,0 +1,42 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  background: url('../../assets/login-back.jpg') no-repeat;
+  background-size: cover;
+  position: relative;
+
+  .loginForm {
+    box-shadow: 0px 0px 7px 8px #ffffff40;
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    border-radius: 5px;
+    width: 400px;
+    backdrop-filter: blur(40px);
+    padding: 20px;
+
+    .loginTitle {
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+      height: 50px;
+      line-height: 50px;
+    }
+
+    .captcha {
+      display: flex;
+      width: 100%;
+      gap: 20px;
+
+      .captchaImage {
+        cursor: pointer;
+      }
+    }
+
+    #submit {
+      margin-top: 10px;
+    }
+  }
+}

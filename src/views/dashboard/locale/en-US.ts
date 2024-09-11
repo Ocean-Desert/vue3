@@ -1,0 +1,26 @@
+
+export default {
+  'components.author-info.805275-0': 'full name',
+  'components.author-info.805275-1': 'Chen Huang',
+  'components.author-info.805275-2': 'Age',
+  'components.author-info.805275-3': 'school',
+  'components.author-info.805275-4': 'Guangzhou Institute of Technology',
+  'components.author-info.805275-5': 'Native place',
+  'components.author-info.805275-6': 'Chaozhou, Guangdong',
+  'components.author-info.805275-7': 'Personal Description',
+  'components.author-info.805275-8': 'Sing, dance, rap, play basketball',
+  'components.author-info.805275-9': 'I like coding, badminton, and LOL',
+  'components.author-info.805275-10': 'Author Information',
+  'components.contact-info.775748-0': 'contact information',
+  'components.donate-info.733724-0': 'Donation support',
+  'components.donate-info.733724-1': 'Can you give me a reward of 50 hamburgers? Thank you',
+  'components.donate-info.733724-2': 'Click to view',
+  'components.project-info.586179-0': 'Customizable backend management system',
+  'components.project-info.586179-1': 'This system is my personal project, with front-end and back-end separation. The front-end is built using Vite and the back-end is built using SpringBoot.',
+  'components.project-info.586179-2': 'He is suitable for rapid development of web application backend management systems, such as CMS, OA, CRM, backend management, and backend monitoring, and can be further developed and customized according to needs.',
+  'components.project-info.586179-3': 'The system provides the most basic RBAC model functions, such as users, roles, menus, data permissions, etc. It also provides system monitoring functions, such as online users, online logs, system information, cache management, etc,',
+  'components.project-info.586179-4': 'Support multi language switching, day/night themes, page layout customization, and other content. Using a large amount of encapsulation in the front-end and back-end code makes the code simpler, easier to maintain, and easier to get started with. In the future, we will continue to optimize and refine in the hope of receiving more attention in the community.',
+  'components.project-info.586179-5': 'Technical selection',
+  'components.project-info.586179-6': 'front-end technology',
+  'components.project-info.586179-7': 'back-end technology'
+}

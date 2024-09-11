@@ -1,0 +1,23 @@
+{
+  "globalSettings": false,
+  "menuFromServer": true,
+  "routeReady": false,
+  "colorWeak": false,
+  "navbar": true,
+  "tabBar": true,
+  "menu": true,
+  "hideMenu": true,
+  "topMenu": false,
+  "userMenus": [],
+  "theme": "light",
+  "size": "medium",
+  "menuWidth": 220,
+  "menuCollapse": false,
+  "hideSearch": false,
+  "search": true,
+  "publicKey": "",
+  "security": {
+    "publicKey": "",
+    "privateKey": ""
+  }
+}

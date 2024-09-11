@@ -1,0 +1,19 @@
+.baseCountDown {
+  color: #fff;
+  text-align: left;
+  position: relative;
+
+  .content {
+    width: auto;
+    display: flex;
+    align-items: center;
+  }
+
+  span {
+    display: inline-block;
+  }
+
+  .section {
+    position: relative;
+  }
+}

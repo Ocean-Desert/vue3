@@ -1,0 +1,16 @@
+.filename {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 4px;
+  &:hover {
+    text-decoration: underline;
+    color: rgb(var(--arcoblue-5));
+  }
+}
+:global {
+  .arco-input-prepend {
+    padding: 0;
+  }
+}

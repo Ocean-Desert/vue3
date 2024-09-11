@@ -1,0 +1,80 @@
+.tabBarContainer {
+  position: relative;
+  background-color: var(--color-bg-2);
+
+  .tabBarBox {
+    display: flex;
+    padding: 0 0 0 20px;
+    background-color: var(--color-bg-2);
+    border-bottom: 1px solid var(--color-border);
+
+    .tabBarScroll {
+      height: 32px;
+      flex: 1;
+      overflow: hidden;
+
+      .tagsWrap {
+        padding: 4px 0;
+        height: 48px;
+        white-space: nowrap;
+        overflow-x: auto;
+
+        :global {
+          .arco-tag {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 6px;
+            cursor: pointer;
+
+            &:first-child {
+              .arco-tag-close-btn {
+                display: none;
+              }
+            }
+          }
+        }
+      }
+    }
+
+  }
+
+  .tagBarOperation {
+    width: 100px;
+    height: 32px;
+  }
+}
+
+:global(.tagLink) {
+  color: var(--color-text-2);
+  text-decoration: none;
+}
+
+.linkActivated {
+  color: rgb(var(--link-6));
+
+  :global {
+    .tagLink {
+      color: rgb(var(--link-6));
+    }
+
+    .arco-tag-close-btn {
+      color: rgb(var(--link-6));
+    }
+  }
+}
+
+:global {
+  .arco-dropdown-open {
+    .tagLink {
+      color: rgb(var(--danger-6));
+    }
+
+    .arco-tag-close-btn {
+      color: rgb(var(--danger-6));
+    }
+  }
+}
+
+.sperateLine {
+  border-bottom: 1px solid var(--color-neutral-3);
+}
