@@ -1,8 +1,6 @@
 import { computed, defineComponent, onMounted, ref } from 'vue'
 import style from './index.module.scss'
 import { useAppStore } from '@/store'
-import { useI18n } from 'vue-i18n'
-import { getAssetsFile, openWindow } from '@/utils'
 import ProjectInfo from './components/project-info'
 import AuthorInfo from './components/author-info'
 import ContactInfo from './components/contact-info'

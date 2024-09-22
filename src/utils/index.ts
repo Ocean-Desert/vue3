@@ -321,9 +321,9 @@ export const to = <T, E = Error>(promise: Promise<T>, onfinally?: () => void, er
  * @returns 文件路径
  */
 export const getAssetsFile = (url: string): string => {
-  const path = `../assets/${url}`
-  const modules = import.meta.glob('../assets/**', { eager:true })
-  return (modules[path].default) as string
+  const path = `../assets${url.startsWith('/') ? url : '/' + url}`
+  const modules = import.meta.glob('../assets/**', { eager: true })
+  return (modules[path] as { default: string }).default
 }
 
 export default null

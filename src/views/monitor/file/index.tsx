@@ -1,5 +1,5 @@
 import { download, preview } from '@/api/common'
-import { fileList, fileRemove, fileRename } from '@/api/monitor/file'
+import { fileList, fileRemove, fileSave, fileRename } from '@/api/monitor/file'
 import type { FileAttrs, FileAttrsParams } from '@/api/monitor/file/type'
 import GenericComment from '@/components/generic/index'
 import style from './index.module.scss'
@@ -221,7 +221,8 @@ export default defineComponent(() => {
     genericRef.value?.fetchData()
   }
   watch(() => searchModel.value.path, (val) => {
-    sessionStorage.set('file-path', val)
+    searchModel.value.path = val ?? searchModel.value.path ?? ''
+    sessionStorage.set('file-path', val ?? '')
   })
   return () => (
     <>
@@ -233,6 +234,7 @@ export default defineComponent(() => {
         searchOptions={searchOptions.value}
         formOptions={formOptions.value}
         list={async (data: FileAttrsParams) => await fileList(data)}
+        save={async (data: FileAttrs) => await fileSave(searchModel.value.path as string, data.name as string)}
         display={useDisplay({ showBatchEdit: false }).value}
       >
         {{
