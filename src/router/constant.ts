@@ -2,15 +2,15 @@ export const REDIRECT_ROUTE_NAME = 'redirect'
 
 export const LayoutName = 'layout'
 export const LoadName = 'load'
-export const LoginName = 'login'
+export const AuthName = 'auth'
 export const NotFoundName = 'notFound'
 
 export const WHITE_LIST = [
   { name: NotFoundName, children: [] },
-  { name: LoginName, children: [] },
+  { name: AuthName, children: [] },
   { name: LoadName, children: [] },
 ]
-
+// LoginName
 export const INTERNAL = [
   { name: 'profile', children: [] },
   { name: 'userProfile', children: [] },

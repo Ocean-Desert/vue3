@@ -24,7 +24,7 @@ export default defineComponent(() => {
         {
           routers.value.map((item, index) => {
             return <a-breadcrumb-item key={index}>
-              <span>{t(item)}</span>
+              <span>{item && t(item)}</span>
             </a-breadcrumb-item>
           })
         }

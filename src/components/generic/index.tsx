@@ -23,6 +23,8 @@ type FormTick = 'add' | 'edit'
 const createFormModel = (options: FormSpace.CoulmnsItem[]): Arco.TableData | ApiSpace.PageParams => {
   const model: Arco.TableData | ApiSpace.PageParams = {}
   options.forEach((item: FormSpace.CoulmnsItem) => {
+    console.log(item, 'item')
+
     if (hasProperty(item, 'defaultValue')) {
       model[item.field] = item.defaultValue
     } else {
@@ -57,7 +59,6 @@ export default defineComponent((options: TableSpace.Options, context: SetupConte
   const delAlias = uuid()
   const form = ref<UseFormResult>(useForm(options.formOptions))
   const searchForm = ref<UseFormResult>(useForm(options.searchOptions))
-
   const formModelBind = options.formModel ? toRef(options, 'formModel', {}) : ref({ ...createFormModel(options.formOptions.columns) })
   const searchModelBind = options.searchModel ? toRef(options, 'searchModel', {}) : ref({ ...createFormModel(options.searchOptions.columns) })
 
@@ -127,6 +128,14 @@ export default defineComponent((options: TableSpace.Options, context: SetupConte
     searchForm.value?.resetOptions()
     clearModel(searchModel)
     fetchData()
+  }
+  const onSelect = (rowKeys: (string | number)[], rowKey: string | number, record: Arco.TableData) => {
+    select(rowKeys, rowKey, record)
+    emit('select', rowKeys, rowKey, record)
+  }
+  const onSelectAll= (checked: boolean) => {
+    selectAll(checked)
+    emit('selectAll', checked)
   }
   const onUpdateByKey = async () => {
     const key = selectKeys.value[selectKeys.value.length - 1]
@@ -266,7 +275,7 @@ export default defineComponent((options: TableSpace.Options, context: SetupConte
         }
         {options.display?.showDel &&
           <a-tooltip content={t('global.generic.remove')}>
-            <a-button onClick={async () => onDelete(record, column)} size={size.value} type="primary" status="danger" loading={loadStates.value[delAlias + record[options.rowKey as string]]}>
+            <a-button onClick={() => onDelete(record, column)} size={size.value} type="primary" status="danger" loading={loadStates.value[delAlias + record[options.rowKey as string]]}>
               {{ icon: () => <icon-delete /> }}
             </a-button>
           </a-tooltip>
@@ -283,16 +292,16 @@ export default defineComponent((options: TableSpace.Options, context: SetupConte
       const value = column.dataIndex && record[column.dataIndex]
       switch (columns.type) {
         case 'choose': return chooseColumnsRender(value, columns.options)
-        case 'multiple': return multipleColumnsRender(value, columns.options)
+        case 'multiple': return multipleColumnsRender(isArray(value) ? value : value?.split(','), columns.options)
         case 'image': return (
           <a-image-preview-group infinite>
             <a-space size={size.value}>
-              {isArray(value) ? value.map((item: string, index: number) => <a-image key={index} src={item} width="100"></a-image>) : value.split(',').map((item: string, index: number) => <a-image key={index} src={item} width="100"></a-image>)}
+              {isArray(value) ? value.map((item: string, index: number) => <a-image key={index} src={item} width="100"></a-image>) : value?.split(',').map((item: string, index: number) => <a-image key={index} src={item} width="100"></a-image>)}
             </a-space>
           </a-image-preview-group>
         )
-        case 'date': return <span>{isDate(value) && new Date(value).toLocaleDateString('zh-CN')}</span>
-        case 'time': return <span>{isDate(value) && new Date(value).toLocaleString('zh-CN')}</span>
+        case 'date': return <span>{isDate(value) ? new Date(value).toLocaleDateString('zh-CN') : value}</span>
+        case 'time': return <span>{isDate(value) ? new Date(value).toLocaleString('zh-CN') : value}</span>
         case 'operate': return operateColumnsRender(record, columns)
       }
     }
@@ -313,6 +322,7 @@ export default defineComponent((options: TableSpace.Options, context: SetupConte
     form.value = useForm(newValue)
   }, { deep: true })
   expose({
+    getTableData: () => tableData.value,
     setVisible: (value: boolean) => visible.value = value,
     getVisible: () => visible.value,
     getFormTick: () => formTick.value,
@@ -323,7 +333,11 @@ export default defineComponent((options: TableSpace.Options, context: SetupConte
     setSearchModel: (record: Partial<ApiSpace.PageParams>) => setModel(searchModel, record),
     setFormValue,
     setSearchValue,
-    fetchData: () => fetchData()
+    fetchData: () => fetchData(),
+    handleDelete: (
+      api: () => Promise<ApiSpace.Result<boolean>>,
+      options?: { title?: string; content?: string; successTip?: string; showModel?: boolean }
+    ) => handleDelete(api, options)
   })
   return () => (
     <>
@@ -389,8 +403,8 @@ export default defineComponent((options: TableSpace.Options, context: SetupConte
             data={tableData.value}
             pagination={pagination}
             columns={cloneColumns.value}
-            onSelect={select}
-            onSelectAll={selectAll}
+            onSelect={onSelect}
+            onSelectAll={onSelectAll}
             size={size.value}
             {...options.props}
           >
@@ -448,7 +462,7 @@ export default defineComponent((options: TableSpace.Options, context: SetupConte
     </>
   )
 }, {
-  emits: ['add', 'search', 'reset', 'update:formModel', 'update:searchModel'],
+  emits: ['add', 'search', 'reset', 'update:formModel', 'update:searchModel', 'select', 'selectAll'],
   props: {
     formModel: {
       type: Object as PropType<Arco.TableData>,
@@ -460,6 +474,22 @@ export default defineComponent((options: TableSpace.Options, context: SetupConte
     },
     props: {
       type: Object as PropType<Omit<Arco.TableInstance['$props'], 'columns' | 'data'>>,
+      required: false
+    },
+    onSelect: {
+      type: Function as PropType<(rowKeys: (string | number)[], rowKey: string | number, record: Arco.TableData) => void>,
+      required: false
+    },
+    onSelectAll: {
+      type: Function as PropType<(checked: boolean) => void>,
+      required: false
+    },
+    onSearch: {
+      type: Function as PropType<() => void>,
+      required: false
+    },
+    onReset: {
+      type: Function as PropType<() => void>,
       required: false
     },
     onAdd: {

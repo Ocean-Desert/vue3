@@ -23,7 +23,7 @@
       "DOM"
     ],
     "skipLibCheck": true,
-    "noEmit": true,
+    // "noEmit": false, // 打包关闭
     "baseUrl": ".",
     "paths": {
       "@/*": [
@@ -33,7 +33,6 @@
   },
   // "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/components/HelloWorld.tsx"],
   "include": [
-    "src/**/*",
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.vue",

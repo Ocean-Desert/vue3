@@ -234,6 +234,61 @@ export const fuzzyQuery = (
 }
 
 /**
+ * 构造树型结构数据
+ * @param data 数据源
+ * @param id id字段 默认 'id'
+ * @param parentId 父节点字段 默认 'parentId'
+ * @param children 孩子节点字段 默认 'children'
+ * @returns 
+ */
+export const handleTree = (
+  data: TreeNode[],
+  id: string = 'id',
+  parentId: string = 'parentId',
+  children: string = 'children',
+): TreeNode[] => {
+  const childrenListMap: Record<string | number, TreeNode[]> = {}
+  const nodeIds: Record<string | number, TreeNode> = {}
+  const tree: TreeNode[] = []
+
+  // 构建 parentId 映射和 nodeId 映射
+  for (const item of data) {
+    const pid = item[parentId]
+    if (!childrenListMap[pid]) {
+      childrenListMap[pid] = []
+    }
+    nodeIds[item[id]] = item
+    childrenListMap[pid].push(item)
+  }
+
+  // 构建树的根节点
+  for (const item of data) {
+    const pid = item[parentId]
+    if (!nodeIds[pid]) {
+      tree.push(item)
+    }
+  }
+
+  // 递归设置子节点
+  function adaptToChildrenList(node: TreeNode): void {
+    const childNodes = childrenListMap[node[id]]
+    if (childNodes) {
+      node[children] = childNodes
+      for (const child of childNodes) {
+        adaptToChildrenList(child)
+      }
+    }
+  }
+
+  // 为每个根节点递归设置子节点
+  for (const rootNode of tree) {
+    adaptToChildrenList(rootNode)
+  }
+
+  return tree
+}
+
+/**
  * const data = [{ id: 1, field: 'id', children = [{ id: 2, field: 'name' }] }] 
  * const result = convertTree(data, (item) => {
  *      return { key: item.id, value: item.field }
@@ -251,12 +306,11 @@ export const convertTree = (
   childrenName: string = 'children'
 ): TreeNode[] => {
   return data.map(item => {
-    let children: TreeNode[] = []
-    if (item[childrenName] && item[childrenName].length > 0) {
-      children = convertTree(item[childrenName], callback, childrenName)
-    }
     const transformData = callback(item)
-    if (children && children.length > 0) transformData[childrenName] = children
+    const childNodes = item[childrenName] || []
+    if (childNodes.length > 0) {
+      transformData[childrenName] = convertTree(childNodes, callback, childrenName)
+    }
     return transformData
   })
 }
@@ -323,7 +377,37 @@ export const to = <T, E = Error>(promise: Promise<T>, onfinally?: () => void, er
 export const getAssetsFile = (url: string): string => {
   const path = `../assets${url.startsWith('/') ? url : '/' + url}`
   const modules = import.meta.glob('../assets/**', { eager: true })
-  return (modules[path] as { default: string }).default
+  return (modules[path] as { default: string })?.default
+}
+
+/**
+ * 转换字符串，undefined,null等转化为''
+ * @param str 参数
+ * @returns 
+ */
+export const parseStringEmpty = (str: null | undefined | string): string => {
+  return str ?? ''
+}
+
+/**
+ * 获取文件扩展名
+ * @param file 文件名字符串，可以是undefined
+ * @returns 返回文件的扩展名，如果没有扩展名或输入无效则返回空字符串
+ */
+export const getFileExtension = (file?: string): string => {
+  const index = file?.lastIndexOf('.')
+  if (!index || index === -1) {
+    return ''
+  }
+  return (file as string).slice(index + 1)
+}
+
+/**
+ * 是否为IE浏览器
+ * @returns 
+ */
+export const isIE = (): boolean => {
+  return !!window.navigator.userAgent.match(/Trident/)
 }
 
 export default null

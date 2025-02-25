@@ -1,4 +1,4 @@
-import axios, { AxiosResponse, AxiosRequestConfig, AxiosError, AxiosInstance, AxiosHeaders } from 'axios'
+import axios, { AxiosResponse, AxiosRequestConfig, AxiosError, AxiosHeaders, InternalAxiosRequestConfig, AxiosInstance } from 'axios'
 import router from '@/router/index'
 import qs from 'qs'
 import { Message } from '@arco-design/web-vue'
@@ -10,15 +10,6 @@ import { localStorage } from './storage'
 import { computed } from 'vue'
 import i18n from '@/locale'
 
-
-//开发环境下解决不能添加cookie
-// if (import.meta.env.MODE === `development`) {
-//   axios.defaults.headers.post[`User`] = `admin`  //与后台配合识别登录用户
-//   axios.defaults.headers.post[`Uid`] = `12345678913` //与后台配合识别登录用户
-// }
-// axios.defaults.headers.post[`Content-Type`] = `application/json;charset=UTF-8`
-
-// const $http = axios.create({ baseURL: import.meta.env.VITE_BASE_URL })
 const http: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_CONTEXT_PATH,
   timeout: 10000,
@@ -40,19 +31,19 @@ const http: AxiosInstance = axios.create({
   }
 })
 
-const errorHandler = (error: ApiSpace.Result) => {
+const errorHandler = (error: ApiSpace.Result<any>) => {
   Message.error({
-    content: error.data as string || error.msg,
+    content: (error.data as string) || error.msg || '未知错误',
     closable: true
   })
 }
 
 // 请求拦截器
-http.interceptors.request.use(async (config: AxiosRequestConfig) => {
+http.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   const authorization = getToken()
   if (authorization) {
     if (!config.headers) {
-      config.headers = {}
+      config.headers = new AxiosHeaders()
     }
     config.headers['Authorization'] = authorization
   }
@@ -70,34 +61,36 @@ http.interceptors.request.use(async (config: AxiosRequestConfig) => {
 )
 
 // 响应拦截器
-http.interceptors.response.use(async (response: AxiosResponse<ApiSpace.Result>) => {
-  const userStore = useUserStore()
-  const { data } = response
-  if (isBlob(data)) {
-    return Promise.resolve(data)
-  }
-  switch (data.status) {
-    case 200: return Promise.resolve(data)
-    case 401: {
-      errorHandler(data)
-      router.push({
-        path: '/login',
-        replace: true
-      })
-      userStore.logoutCallBack()
-      break
+http.interceptors.response.use(
+  (response: AxiosResponse<ApiSpace.Result<any>>) => {
+    const userStore = useUserStore()
+    const { data } = response
+    if (isBlob(data)) {
+      return data
     }
-    default: {
-      errorHandler(data)
-      return Promise.reject(data)
+    switch (data.status) {
+      case 200: return data
+      case 401: {
+        errorHandler(data)
+        router.push({
+          path: '/auth',
+          replace: true
+        })
+        userStore.logoutCallBack()
+        break
+      }
+      default: {
+        errorHandler(data)
+        return Promise.reject(data)
+      }
     }
-  }
-},
-  (error: AxiosError<ApiSpace.Result>) => {
+    return data
+  },
+  (error: AxiosError<ApiSpace.Result<any>>) => {
     const { response } = error
     errorHandler(response?.data || { status: 500, success: false, msg: '未知错误' })
     return Promise.reject(error)
-  },
+  }
 )
 
 export default http

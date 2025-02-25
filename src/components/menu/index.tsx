@@ -27,7 +27,6 @@ export default defineComponent(() => {
   const setCollapse = (val: boolean) => {
     appStore.updateAppSetting({ menuCollapse: val })
   }
-  console.log(t('global.menu.user'), 'global.menu.user');
   
   const renderSubMenu = () => {
     function travel(_route: RouteRecordRaw[], nodes = []) {

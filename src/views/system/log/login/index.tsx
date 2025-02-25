@@ -16,7 +16,7 @@ export default defineComponent(() => {
   const loginStatusDict = useDictSelect(async () => dict('sys_login_status'))
   const genericRef = ref<GenericInstance>()
   const searchModel = ref<SysLogininfoParams>({})
-  const { dateRange } = useDateRange(searchModel.value)
+  const { dateRange } = useDateRange(searchModel)
   const permission = ['system:logininfo:del']
   const searchOptions = computed<FormSpace.Options>(() => ({
     form: { layout: 'horizontal', size: size.value },
@@ -38,7 +38,7 @@ export default defineComponent(() => {
       label: t('login.index.935518-2'),
       field: '',
       render: (value: object) => {
-        return <a-range-picker v-model={dateRange.value} style="width: 300px;" size={size.value} />
+        return <a-range-picker v-model={dateRange.value} style={{width: '300px'}} size={size.value} />
       }
     }]
   }))

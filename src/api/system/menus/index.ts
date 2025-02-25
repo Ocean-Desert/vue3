@@ -49,7 +49,7 @@ export const menuDelete = (id: number | string) => {
 }
 
 export const menus = () => {
-  return request({
+  return request<unknown, Promise<ApiSpace.Result<SysMenu[]>>>({
     url: '/system/menu',
     method: 'get'
   })
@@ -62,7 +62,7 @@ export const roleMenuTreeselect = (roleId: number) => {
   })
 }
 
-export const menTreeselect = (params: SysMenuParam) => {
+export const menuTreeselect = (params: SysMenuParam) => {
   return request<unknown, Promise<ApiSpace.Result<TreeSelect[]>>>({
     url: '/system/menu/treeselect',
     method: 'get',

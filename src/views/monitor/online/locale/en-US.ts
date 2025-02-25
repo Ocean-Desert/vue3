@@ -5,7 +5,7 @@ export default {
   'online.index.431513-3': 'Login address',
   'online.index.431513-4': 'browser',
   'online.index.431513-5': 'system',
-  'online.index.431513-6': 'login time',
+  'online.index.431513-6': 'auth time',
   'online.index.431513-7': 'operation',
   'online.index.431513-8': 'Forced withdrawal',
   'online.index.431513-9': 'Tips',

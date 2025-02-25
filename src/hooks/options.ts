@@ -1,13 +1,14 @@
-import type { TableData, TableInstance, SelectOptionData, TreeNodeData, RequestOption, FileItem } from '@arco-design/web-vue'
+import type { TableData, TableInstance, SelectOptionData, TreeNodeData, RequestOption, FileItem, CascaderOption, UploadRequest } from '@arco-design/web-vue'
 import { Message, Modal } from '@arco-design/web-vue'
 import { Ref, reactive, ref, toRefs, toValue, onMounted, computed } from 'vue'
-import lodash from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import { SysDictData } from '@/api/system/dict/type'
 import { SysFile, TreeSelect, UploadOptions } from '@/api/common/type'
-import { convertTree, to } from '@/utils'
+import { convertTree, handleTree, to, uuid } from '@/utils'
 import { AxiosProgressEvent } from 'axios'
 import { useAppStore } from '@/store'
 import { encryptData, type DecryptData, type EncryptData } from '@/utils/security'
+import { isArray } from '@/utils/is'
 
 export const useSecurityApi = (api: (data: EncryptData | any) => Promise<ApiSpace.Result<DecryptData | unknown>>, isEncrypt = true) => {
   const appStore = useAppStore()
@@ -27,7 +28,7 @@ export const useSecurityApi = (api: (data: EncryptData | any) => Promise<ApiSpac
   }
   return { keyPair, execute }
 }
-export const useDateRange = (model: ApiSpace.PageParams, options?: {
+export const useDateRange = (model: Ref<ApiSpace.PageParams>, options?: {
   beginTime?: string,
   endTime?: string,
   initValue?: any | any[]
@@ -35,17 +36,17 @@ export const useDateRange = (model: ApiSpace.PageParams, options?: {
   const beginTime = options?.beginTime ?? 'beginTime'
   const endTime = options?.endTime ?? 'endTime'
   const initValue = options?.initValue ?? { [beginTime]: '', [endTime]: '' }
-  if (!model.params) {
-    model.params = { ...initValue }
+  if (!model.value.params) {
+    model.value.params = { ...initValue }
   }
   const dateRange = computed({
-    get: () => ([model.params[beginTime], model.params[endTime]]),
+    get: () => ([model.value.params[beginTime], model.value.params[endTime]]),
     set: (value: string[]) => {
       if (value) {
-        model.params[beginTime] = value[0]
-        model.params[endTime] = value[1]
+        model.value.params[beginTime] = value[0]
+        model.value.params[endTime] = value[1]
       } else {
-        model.params = { ...initValue }
+        model.value.params = { ...initValue }
       }
     }
   })
@@ -63,7 +64,46 @@ export const useVisible = (initValue: boolean = false) => {
   return { visible, setVisible, toggle }
 }
 
-export const useUpload = (api: (form: FormData, options?: UploadOptions) => Promise<ApiSpace.Result<SysFile[]>>) => {
+export const useUpload = (model: Ref<TableData>) => { 
+  const syncFileToModel = (fileItems: FileItem[], fieldName: string, isMultiple = false, isArray = false) => {
+    if (fileItems.length === 0) {
+      model.value[fieldName] = isArray ? [] : ''
+      return
+    }
+    const doneFiles = fileItems.filter(item => item.status === 'done' && item.response)
+    if (doneFiles.length === 0) return
+    if (!isMultiple) {
+      model.value[fieldName] = doneFiles[0].response.data.path
+      return
+    }
+    const uploadedPaths = doneFiles.map(item => item.response.data.path)
+    model.value[fieldName] = isArray ? uploadedPaths : uploadedPaths.join(',')
+  }
+
+  const parseFile = (url?: string | string[]) => {
+    if (!url) return []
+    if (isArray(url)) {
+      return url.map(parseFileItem)
+    }
+    return url.includes(',')
+      ? url.split(',').map(item => parseFileItem(item.trim()))
+      : [parseFileItem(url)]
+  }
+
+  const parseFileItem = (url: string): FileItem => ({
+    url,
+    name: url.split('/').pop(),
+    status: 'done',
+    uid: uuid(),
+    response: { data: { path: url } }
+  })
+
+  return {
+    syncFileToModel,
+    parseFile
+  }
+}
+export const useCustomUpload = (api: (form: FormData, options?: UploadOptions) => Promise<ApiSpace.Result<SysFile>>) => {
   const file = ref<FileItem>()
   const fileList = ref<FileItem[]>([])
   const fileRemove = (file: FileItem) => {
@@ -77,7 +117,7 @@ export const useUpload = (api: (form: FormData, options?: UploadOptions) => Prom
       }
     })
   }
-  const upload = async (option: RequestOption): Promise<[Error, undefined] | [null, ApiSpace.Result<SysFile[]>]> => {
+  const upload = async (option: RequestOption): Promise<[Error, undefined] | [null, ApiSpace.Result<SysFile>]> => {
     const { onProgress, onError, onSuccess, fileItem, headers, action, data } = option
     const form = new FormData()
     form.append('file', fileItem.file as Blob)
@@ -86,7 +126,7 @@ export const useUpload = (api: (form: FormData, options?: UploadOptions) => Prom
         form.append(item, data[item])
       })
     }
-    return await to<ApiSpace.Result<SysFile[]>>(api(form, {
+    return await to<ApiSpace.Result<SysFile>>(api(form, {
       headers,
       action,
       onProgress: (event: AxiosProgressEvent) => {
@@ -98,14 +138,17 @@ export const useUpload = (api: (form: FormData, options?: UploadOptions) => Prom
       }
     }))
   }
-  const imageRequest = async (option: RequestOption) => {
+  const handleUpload = async (
+    option: RequestOption, 
+    onSuccess: (data: SysFile) => void
+  ) => {
     const [err, response] = await upload(option)
     if (!err) {
       if (response.success) {
         option.onSuccess(response)
         if (!response.data) return
         option.fileItem.status = 'done'
-        file.value = { ...option.fileItem, url: response.data[response?.data?.length - 1]?.path }
+        onSuccess(response.data)
       } else {
         option.onError(response)
         option.fileItem.status = 'error'
@@ -116,40 +159,105 @@ export const useUpload = (api: (form: FormData, options?: UploadOptions) => Prom
       option.onError(err)
     }
   }
-  const imagesRequest = async (option: RequestOption) => {
-    const [err, response] = await upload(option)
-    if (!err) {
-      if (response.success) {
-        option.onSuccess(response)
-        if (!response.data) return
-        option.fileItem.status = 'done'
-        fileList.value.push({ ...option.fileItem, url: response.data[response?.data?.length - 1]?.path })
-      } else {
-        option.onError(response)
-        option.fileItem.status = 'error'
-        Message.error(response.msg || '上传失败')
-      }
-    } else {
-      console.error(err)
-      option.onError(err)
-    }
+  const imageRequest = (option: RequestOption): UploadRequest => {
+    const abortController = new AbortController()
+    
+    (async () => {
+      await handleUpload(option, (data) => {
+        file.value = { ...option.fileItem, url: data.path }
+      })
+    })()
+
+    return { abort: () => abortController.abort() }
+  }
+  const imagesRequest = (option: RequestOption): UploadRequest => {
+    const abortController = new AbortController()
+    
+    (async () => {
+      await handleUpload(option, (data) => {
+        fileList.value.push({ ...option.fileItem, url: data.path })
+      })
+    })()
+
+    return { abort: () => abortController.abort() }
   }
   return { fileList, file, imageRequest, imagesRequest, fileRemove }
 }
 
-export const useTreeSelect = (api: () => Promise<ApiSpace.Result<TreeSelect[]>>, options?: { immediate?: boolean, callback?: (node: TreeNode) => TreeNode }) => {
+export const useCascader = (
+  api: () => Promise<ApiSpace.Result<TreeNode[]>>,
+  options?: {
+    immediate?: boolean,   // 是否立即请求数据
+    flatHandle?: boolean,  // 后端数据是否是平铺数据
+    callback?: (node: TreeNode) => CascaderOption,  // 节点处理函数
+    id?: string,           // id字段名
+    parentId?: string,     // 父节点字段名
+    children?: string,     // 子节点字段名
+  }
+) => {
   const isImmediate = options?.immediate ?? true
-  const callback = options?.callback ? options.callback : (data: TreeNode) => ({ key: data.id, title: data.label })
+  const isFlatHandle = options?.flatHandle ?? true
+  const id = options?.id ?? 'id'
+  const parentId = options?.parentId ?? 'parentId'
+  const children = options?.children ?? 'children'
+  const callback = options?.callback ?? ((node: TreeNode) => ({ value: node[id], label: node.label }))
   const loading = ref(false)
-  const data = ref<TreeNodeData[]>([])
+  const data = ref<CascaderOption[]>([])
+  const responseData = ref<ApiSpace.Result<TreeNode[]>>()
   const fetchData = async () => {
+    if (loading.value) return
     loading.value = true
     data.value = []
-    const [err, response] = await to<ApiSpace.Result<TreeSelect[]>>(api(), () => loading.value = false)
+    const [err, response] = await to<ApiSpace.Result<TreeNode[]>>(api(), () => loading.value = false)
     if (!err) {
       if (response.success) {
-        const treeData = response.data as TreeSelect[]
-        data.value = convertTree(treeData, callback)
+        responseData.value = response
+        const apiData = response.data as TreeNode[]
+        const processedData = isFlatHandle ? handleTree(apiData, id, parentId, children) : apiData
+        data.value = convertTree(processedData, callback)
+      }
+    } else {
+      console.error(err)
+    }
+  }
+
+  onMounted(() => {
+    isImmediate && fetchData()
+  })
+
+  return { loading, options: data, fetchData, response: responseData }
+}
+
+export const useTreeSelect = (
+  api: () => Promise<ApiSpace.Result<TreeNode[]>>, // 获取后端数据（树形or平铺数据）
+  options?: {
+    immediate?: boolean, // 立即请求数据
+    flatHandle?: boolean, // 后端是否是平铺数据
+    callback?: (node: TreeNode) => TreeNodeData, // 节点处理
+    id?: string, // 默认id名
+    parentId?: string, // 默认parentId名
+    children?: string, // 默认children名
+  }) => {
+  const isImmediate = options?.immediate ?? true
+  const isFlatHandle = options?.flatHandle ?? true
+  const id = options?.id ?? 'id'
+  const parentId = options?.parentId ?? 'parentId'
+  const children = options?.children ?? 'children'
+  const callback = options?.callback ?? ((data: TreeNode) => ({ key: data[id], title: data.label }))
+  const loading = ref(false)
+  const data = ref<TreeNodeData[]>([])
+  const responseData = ref<ApiSpace.Result<TreeNode[]>>()
+  const fetchData = async () => {
+    if (loading.value) return
+    loading.value = true
+    data.value = []
+    const [err, response] = await to<ApiSpace.Result<TreeNode[]>>(api(), () => loading.value = false)
+    if (!err) {
+      if (response.success) {
+        responseData.value = response
+        const apiData = response.data as TreeNode[]
+        const processedData = isFlatHandle ? handleTree(apiData, id, parentId, children) : apiData
+        data.value = convertTree(processedData, callback)
       }
     } else {
       console.error(err)
@@ -158,8 +266,34 @@ export const useTreeSelect = (api: () => Promise<ApiSpace.Result<TreeSelect[]>>,
   onMounted(() => {
     isImmediate && fetchData()
   })
-  return { loading, data, fetchData }
+  return { loading, data, fetchData, response: responseData }
 }
+
+export const useSelect = <S>(api: () => Promise<ApiSpace.Result<S[]>>, callback: (source: S[]) => SelectOptionData[], immediate?: boolean) => {
+  const isImmediate = immediate ?? true
+  const loading = ref(false)
+  const options = ref<SelectOptionData[]>([])
+  const responseData = ref<ApiSpace.Result<S[]>>()
+  const fetchData = async () => {
+    if (loading.value) return
+    loading.value = true
+    const [err, response] = await to<ApiSpace.Result<S[]>>(api(), () => loading.value = false)
+    if (!err) {
+      if (response.success) {
+        responseData.value = response
+        const source = response.data as S[]
+        options.value = callback(source)
+      }
+    } else {
+      console.error(err)
+    }
+  }
+  onMounted(() => {
+    isImmediate && fetchData()
+  })
+  return { loading, options, fetchData, response: responseData }
+}
+
 
 export const useDictSelectMultiple = (...apis: (() => Promise<ApiSpace.Result<SysDictData[]>>)[]): UseDictSelectResult[] => {
   const result: UseDictSelectResult[] = []
@@ -226,35 +360,13 @@ export const useDictSelectMultiple = (...apis: (() => Promise<ApiSpace.Result<Sy
   })
   return result
 }
-
-export const useSelect = <S>(api: () => Promise<ApiSpace.Result<S[]>>, callback: (source: S[]) => SelectOptionData[], immediate?: boolean) => {
-  const isImmediate = immediate ?? true
-  const loading = ref(false)
-  const data = ref<SelectOptionData[]>([])
-  const fetchData = async () => {
-    loading.value = true
-    const [err, response] = await to<ApiSpace.Result<S[]>>(api(), () => loading.value = false)
-    if (!err) {
-      if (response.success) {
-        const source = response.data as S[]
-        data.value = callback(source)
-      }
-    } else {
-      console.error(err)
-    }
-  }
-  onMounted(() => {
-    isImmediate && fetchData()
-  })
-  return { loading, data, fetchData }
-}
-
 export const useDictSelect = (api: () => Promise<ApiSpace.Result<SysDictData[]>>, immediate?: boolean): UseDictSelectResult => {
   const isImmediate = immediate ?? true
   const loading = ref(false)
   const options = ref<SelectOptionData[]>([])
   const defaultValue = ref()
   const fetchData = async () => {
+    if (loading.value) return
     loading.value = true
     options.value = []
     const [err, response] = await to<ApiSpace.Result<SysDictData[]>>(api(), () => loading.value = false)
@@ -295,6 +407,7 @@ export const useTable = (api: ApiSpace.PageApi | ApiSpace.Api<TableData>, option
   const selectKeys = ref<(number | string)[]>([])
   const { pagination, setTotal } = isPagination ? usePagination(() => fetchData()) : { pagination: false, setTotal: undefined }
   const fetchData = async () => {
+    if (loading.value) return
     loading.value = true
     if (isPagination && pagination && setTotal) {
       const pageApi = api as ApiSpace.PageApi
@@ -331,6 +444,7 @@ export const useTable = (api: ApiSpace.PageApi | ApiSpace.Api<TableData>, option
     options?: { title?: string; content?: string; successTip?: string; showModel?: boolean }
   ): Promise<boolean | undefined> => {
     const onDelete = async () => {
+      if (loading.value) return
       loading.value = true
       const [err, response] = await to<ApiSpace.Result<boolean>>(api(), () => loading.value = false)
       if (!err) {
@@ -390,7 +504,7 @@ export const usePagination = (callback: PageSpace.Callback, options: PageSpace.P
 }
 
 export const useForm = (initValue: FormSpace.Options): UseFormResult => {
-  const getInitValue = () => lodash.cloneDeep(initValue)
+  const getInitValue = () => cloneDeep(initValue)
   const options = reactive<FormSpace.Options>(initValue)
   const resetOptions = () => {
     Object.assign(options, getInitValue())

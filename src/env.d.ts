@@ -17,4 +17,5 @@ declare interface ViteEnv {
   readonly VITE_API_BASE_URL: string
   readonly VITE_API_CONTEXT_PATH: string
   readonly VITE_API_CONTEXT_FILE: string
+  readonly VITE_API_SOCK_ENDPOINT: string
 }

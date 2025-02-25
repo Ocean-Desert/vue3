@@ -10,6 +10,12 @@ declare const _default: import('vue').DefineComponent<{
   props: {
     type: PropType<Omit<import('@arco-design/web-vue').TableInstance['$props'], 'columns' | 'data'>>
   },
+  onSelect: {
+    type: PropType<(rowKeys: (string | number)[], rowKey: string | number, record: import('@arco-design/web-vue').TableData) => void>
+  },
+  onSelectAll: {
+    type: PropType<(checked: boolean) => void>
+  },
   onAdd: {
     type: PropType<() => void>
   },
@@ -99,6 +105,11 @@ declare const _default: import('vue').DefineComponent<{
   render: () => JSX.Element
 }, unknown, {},
   {
+    handleDelete(
+      api: () => Promise<ApiSpace.Result<boolean>>,
+      options?: { title?: string; content?: string; successTip?: string; showModel?: boolean }
+    ): void
+    getTableData(): import('@arco-design/web-vue').TableData[]
     fetchData(): void
     setVisible(value: boolean): void
     getVisible(): boolean
@@ -132,7 +143,11 @@ declare const _default: import('vue').DefineComponent<{
     save?: unknown
     update?: unknown
     remove?: unknown
+    onSelect?: unknown
+    onSelectAll?: unknown
     onAdd?: unknown
+    onSearch?: unknown
+    onReset?: unknown
     formModel?: unknown
     searchModel?: unknown
     isPagination?: unknown

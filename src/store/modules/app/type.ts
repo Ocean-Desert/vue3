@@ -10,7 +10,6 @@ export interface AppState {
   menu: boolean // 是否渲染菜单
   hideMenu: boolean // 是否隐藏菜单
   topMenu: boolean // 是否置顶菜单
-  routeReady: boolean // 是否路由是否加载完毕
   menuFromServer: boolean // 菜单是否来自服务器
   menuWidth: number // 菜单宽度
   userMenus: SysMenu[] // 用户所分配的菜单

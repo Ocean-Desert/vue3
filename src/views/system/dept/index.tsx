@@ -15,7 +15,7 @@ export default defineComponent(() => {
   const size = computed(() => appStore.size)
   const genericRef = ref<GenericInstance>()
   const enabledDict = useDictSelect(async () => await dict('sys_enabled'))
-  const treeSelect = useTreeSelect(async () => await treeselect({}), { immediate: false })
+  const treeSelect = useTreeSelect(async () => await treeselect({}), { immediate: false, flatHandle: false })
   const model = ref<SysDept>({})
   const hideTree = ref(false)
   const searchOptions = computed<FormSpace.Options>(() => ({
@@ -74,10 +74,9 @@ export default defineComponent(() => {
       label: t('dept.index.069779-4'),
       field: 'parentId',
       span: 12,
-      data: treeSelect.data.value,
       hide: hideTree.value,
       rules: [{ required: true, message: t('dept.index.069779-5') }],
-      props: { loading: treeSelect.loading.value }
+      props: { loading: treeSelect.loading.value, data: treeSelect.data.value, }
     }, {
       type: 'input',
       label: t('dept.index.069779-6'),

@@ -1,12 +1,12 @@
 import { RouteRecordRaw } from 'vue-router'
-import { LoadName, LoginName, NotFoundName, REDIRECT_ROUTE_NAME } from './constant'
+import { LoadName, AuthName, NotFoundName, REDIRECT_ROUTE_NAME } from './constant'
 import { Layout } from './routes/base'
 
 export const STATIC: RouteRecordRaw[] = [
   {
-    path: '/login',
-    name: LoginName,
-    component: () => import('@/views/login/index.tsx'),
+    path: '/auth',
+    name: AuthName,
+    component: () => import('@/views/auth/index.tsx'),
     meta: {
       requiresAuth: false,
     },
@@ -47,5 +47,29 @@ export const DYNAMIC_ROUTES: RouteRecordRaw[] = [
         }
       }
     ]
-  },
+  }, {
+    name: 'genEdit',
+    path: '/tool/gen-edit',
+    component: Layout,
+    meta: {
+      title: '生成配置',
+      requiresAuth: true,
+      permissions: ['tool:generator:edit'],
+      keepAlive: false,
+    },
+    children: [
+      {
+        path: 'index/:tableId(\\d+)',
+        component: () => import('@/views/tool/gen/edit.tsx'),
+        name: 'genEditIndex',
+        meta: {
+          title: '生成配置',
+          requiresAuth: true,
+          permissions: ['tool:generator:edit'],
+          keepAlive: false,
+        }
+      }
+    ]
+  }
+
 ]

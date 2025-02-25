@@ -1,12 +1,11 @@
 {
   "globalSettings": false,
   "menuFromServer": true,
-  "routeReady": false,
   "colorWeak": false,
   "navbar": true,
   "tabBar": true,
   "menu": true,
-  "hideMenu": true,
+  "hideMenu": false,
   "topMenu": false,
   "userMenus": [],
   "theme": "light",

@@ -4,7 +4,7 @@ import { useDictSelect, useTreeSelect } from '@/hooks/options'
 import { dict } from '@/api/system/dict'
 import type { SysRole, SysRoleParam } from '@/api/system/role/type'
 import { roleOne, rolePage, roleUpdate, roleAdd, roleDelete, deptTree, dataScope } from '@/api/system/role'
-import { roleMenuTreeselect, menTreeselect } from '@/api/system/menus'
+import { roleMenuTreeselect, menuTreeselect } from '@/api/system/menus'
 import { TableData } from '@arco-design/web-vue'
 import { convertTree, to } from '@/utils'
 import { RoleMenuTreeSelect } from '@/api/system/menus/type'
@@ -22,8 +22,8 @@ export default defineComponent(() => {
   const treeData = ref<TreeSelect[]>([])
   const checkedKeys = ref<number[]>([])
   const enabledDict = useDictSelect(async () => await dict('sys_enabled'))
-  const treeSelect = useTreeSelect(async () => await menTreeselect({}), { immediate: false })
-  const searchOptions = ref<FormSpace.Options>({
+  const treeSelect = useTreeSelect(async () => await menuTreeselect({}), { immediate: false, flatHandle: false })
+  const searchOptions = computed<FormSpace.Options>(() => ({
     form: { layout: 'horizontal', size: size.value },
     btns: { hide: false },
     columns: [{
@@ -41,7 +41,7 @@ export default defineComponent(() => {
       options: enabledDict.options.value,
       props: { loading: enabledDict.loading.value },
     }]
-  })
+  }))
   const formOptions = ref<FormSpace.Options>({
     form: { size: size.value },
     btns: { hide: true },

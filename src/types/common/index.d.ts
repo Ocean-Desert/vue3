@@ -42,7 +42,6 @@ declare namespace TableSpace {
     | 'default' // 默认
     | 'choose' // 选择
     | 'multiple' // 多选
-    | 'avatar' // 头像
     | 'image' // 图片
     | 'date' // 日期
     | 'time' // 时间
@@ -51,7 +50,11 @@ declare namespace TableSpace {
   interface Columns {
     type: Type // 类型
     props: import('@arco-design/web-vue').TableColumnData
-    options?: import('@arco-design/web-vue').SelectInstance['$props']['options'] // 多选框的数据
+    options?: import('@arco-design/web-vue').SelectInstance['$props']['options']
+    | import('@arco-design/web-vue').SelectInstance['$props']['options']
+    | import('@arco-design/web-vue').RadioGroupInstance['$props']['options']
+    | import('@arco-design/web-vue').CheckboxGroupInstance['$props']['options']
+    | import('@arco-design/web-vue').CascaderInstance['$props']['options']
     onUpdate?: (data: import('@arco-design/web-vue').TableInstance['$data']) => void // 更新函数
     onDelete?: (data: import('@arco-design/web-vue').TableInstance['$data']) => void // 删除函数
   }
@@ -75,6 +78,8 @@ declare namespace TableSpace {
     save?: (data: import('@arco-design/web-vue').TableData) => Promise<Result<boolean>>
     update?: (data: import('@arco-design/web-vue').TableData) => Promise<Result<boolean>>
     remove?: (id: number | string) => Promise<Result<boolean>>
+    onSelect?: (rowKeys: (string | number)[], rowKey: string | number, record: import('@arco-design/web-vue').TableData) => void
+    onSelectAll?: (checked: boolean) => void
     onAdd?: () => void
     onSearch?: () => void
     onReset?: () => void
@@ -92,6 +97,11 @@ declare namespace FormSpace {
     | 'checkbox-group' // 单选
     | 'textarea' // 文本域
     | 'date-picker' // 日期选择
+    | 'month-picker' // 月份选择
+    | 'year-picker' // 年份选择
+    | 'quarter-picker' // 季度选择
+    | 'week-picker' // 周选择
+    | 'range-picker' // 日期范围选择
     | 'time-picker' // 时间选择
     | 'input-number' // 数字输入框
     | 'input-password' // 密码
@@ -137,6 +147,11 @@ declare namespace FormSpace {
     | import('@arco-design/web-vue').CheckboxGroupInstance['$props']
     | import('@arco-design/web-vue').TextareaInstance['$props']
     | import('@arco-design/web-vue').DatePickerInstance['$props']
+    | import('@arco-design/web-vue').MonthPickerInstance['$props']
+    | import('@arco-design/web-vue').YearPickerInstance['$props']
+    | import('@arco-design/web-vue').QuarterPickerInstance['$props']
+    | import('@arco-design/web-vue').WeekPickerInstance['$props']
+    | import('@arco-design/web-vue').RangePickerInstance['$props']
     | import('@arco-design/web-vue').TimePickerInstance['$props']
     | import('@arco-design/web-vue').InputPasswordInstance['$props']
     | import('@arco-design/web-vue').InputNumberInstance['$props']
@@ -153,8 +168,8 @@ declare namespace FormSpace {
     | import('@arco-design/web-vue').RadioGroupInstance['$props']['options']
     | import('@arco-design/web-vue').CheckboxGroupInstance['$props']['options']
     | import('@arco-design/web-vue').CascaderInstance['$props']['options']
-    data?: import('@arco-design/web-vue').TreeSelectInstance['$props']['data']
     hide?: CoulmnsItemHide
+    ignore?: boolean
     render?: (value: any) => VNodeChild
   }
 

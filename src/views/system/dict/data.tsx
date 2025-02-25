@@ -5,7 +5,7 @@ import { SysDictData, SysDictDataParams } from '@/api/system/dict/type'
 import { useDictSelect } from '@/hooks/options'
 import { useRoute, useRouter } from 'vue-router'
 import { GenericInstance } from '@/types/generic'
-import useTabBarStore from '@/store/modules/tabBar'
+import { useTabBarStore } from '@/store'
 import { TagProps } from '@/store/modules/tabBar/type'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/store'
@@ -19,6 +19,7 @@ export default defineComponent(() => {
   const tabBarStore = useTabBarStore()
   const genericRef = ref<GenericInstance>()
   const dictType = ref('')
+  const tagList = computed(() => (tabBarStore.getTagList))
   const enabledDict = useDictSelect(async () => await dict('sys_enabled'))
   const searchOptions = computed<FormSpace.Options>(() => ({
     form: { layout: 'horizontal', size: size.value },
@@ -83,7 +84,7 @@ export default defineComponent(() => {
     type: 'choose',
     props: {
       title: t('dict.data.664297-2'),
-      dataIndex: 'enabled',
+      dataIndex: 'isDefault',
       align: 'center',
     },
     options: [{ label: t('dict.data.664297-3'), value: false }, { label: t('dict.data.664297-4'), value: true }]
@@ -160,25 +161,14 @@ export default defineComponent(() => {
     }
   }
   const closeCurrent = () => {
+
     router.push({ name: 'dict' })
   }
-  const closeOtherTag = () => {
-    const index = findFirstDuplicateTagProps(tabBarStore.getTagList)
-    if (index) tabBarStore.deleteTag(index, tabBarStore.getTagList[index])
-  }
-  const findFirstDuplicateTagProps = (tagList: TagProps[]): number | undefined => {
-    const nameTracker: { [key: string]: number } = {}
-    for (let i = 0; i < tagList.length; i++) {
-      const item = tagList[i]
-      if (nameTracker[item.name]) {
-        return nameTracker[item.name] - 1
-      }
-      nameTracker[item.name] = i + 1
-    }
-    return undefined
+  const closeOtherDuplicateTag = () => {
+    tabBarStore.closeDuplicateTag(tagList.value)
   }
   onMounted(() => {
-    closeOtherTag()
+    closeOtherDuplicateTag()
     fetchData()
   })
   return () => (

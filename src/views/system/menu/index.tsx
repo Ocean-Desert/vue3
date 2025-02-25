@@ -1,6 +1,6 @@
 import { computed, defineComponent, h, reactive, ref, resolveComponent, toRef, toRefs, watch } from 'vue'
 import GenericComment from '@/components/generic/index'
-import { menuOne, menuList, menuUpdate, menuAdd, menuDelete, menTreeselect } from '@/api/system/menus'
+import { menuOne, menuList, menuUpdate, menuAdd, menuDelete, menuTreeselect } from '@/api/system/menus'
 import { SysMenu, SysMenuParam } from '@/api/system/menus/type'
 import { useDictSelectMultiple, useDisplay, useTreeSelect } from '@/hooks/options'
 import { dict } from '@/api/system/dict'
@@ -8,6 +8,7 @@ import type { TableColumnData, TableData } from '@arco-design/web-vue'
 import { GenericInstance } from '@/types/generic'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/store'
+import type { TreeSelect } from '@/api/common/type'
 
 export default defineComponent(() => {
   const { t } = useI18n()
@@ -17,7 +18,7 @@ export default defineComponent(() => {
   const isRules = ref(true)
   const model = ref<SysMenu>({})
   const [enabledDict, menuTypeDict] = useDictSelectMultiple(async () => await dict('sys_enabled'), async () => await dict('sys_menu_type'))
-  const treeSelect = useTreeSelect(async () => await menTreeselect({}), { immediate: false })
+  const treeSelect = useTreeSelect(async () => await menuTreeselect({}), { immediate: false, flatHandle: false })
   const searchOptions = computed<FormSpace.Options>(() => ({
     form: { layout: 'horizontal', size: size.value },
     btns: { hide: false },
@@ -136,9 +137,8 @@ export default defineComponent(() => {
       field: 'parentId',
       defaultValue: 0,
       span: 12,
-      data: [{ key: 0, title: t('menu.index.641353-13'), children: treeSelect.data.value }],
       rules: [{ required: true, message: t('menu.index.641353-14') }],
-      props: { loading: treeSelect.loading.value }
+      props: { loading: treeSelect.loading.value, data: [{ key: 0, title: t('menu.index.641353-13'), children: treeSelect.data.value }], }
     }, {
       type: 'input',
       label: t('menu.index.641353-15'),
@@ -204,6 +204,7 @@ export default defineComponent(() => {
     model.value = { parentId: record.id }
     genericRef.value?.setFormTick('add')
     genericRef.value?.setVisible(true)
+    
   }
   return () => (
     <>
@@ -231,9 +232,9 @@ export default defineComponent(() => {
         onAdd={async () => await treeSelect.fetchData()}
       >
         {{
-          operate: (record: TableData) => {
+          'operate': (record: TableData) => {
             if (record.type === 'F') return
-            return <a-tooltip content={t('menu.index.641353-25')} >
+            return <a-tooltip content={t('menu.index.641353-25')}>
               <a-button onClick={() => onAppendChild(record)} type="primary" size={size.value}>
                 {{ icon: () => <icon-folder-add /> }}
               </a-button>

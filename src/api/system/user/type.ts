@@ -1,7 +1,7 @@
-import { TableData } from '@arco-design/web-vue'
+import type { BaseEntity, BaseEntityParams } from '@/api/common/type'
 import { SysDept } from '../dept/type'
 
-export interface SysUser extends TableData {
+export interface SysUser extends BaseEntity {
   id?: number
   deptId?: number
   userId?: number
@@ -11,6 +11,7 @@ export interface SysUser extends TableData {
   avatar?: string
   sex?: string
   phone?: string
+  email?: string
   loginIp?: string
   loginTime?: string
   enabled?: boolean
@@ -18,7 +19,7 @@ export interface SysUser extends TableData {
   sysDept?: SysDept
 }
 
-export interface SysUserParam extends ApiSpace.PageParams {
+export interface SysUserParam extends BaseEntityParams {
   id?: number
   username?: string
   sex?: string

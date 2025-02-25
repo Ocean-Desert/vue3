@@ -1,7 +1,7 @@
-import { TableData } from '@arco-design/web-vue'
+import type { BaseEntity, BaseEntityParams } from '@/api/common/type'
 import { TreeSelect } from '../../common/type'
 
-export interface SysDept extends TableData {
+export interface SysDept extends BaseEntity {
   deptId?: number
   parentId?: number
   ancestors?: string
@@ -13,7 +13,7 @@ export interface SysDept extends TableData {
   children?: SysDept[]
 }
 
-export interface SysDeptParam extends TableData {
+export interface SysDeptParam extends BaseEntityParams {
   deptName?: string
   enabled?: boolean
 }

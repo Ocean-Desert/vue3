@@ -1,0 +1,131 @@
+#editorBody {
+  border: 1px solid var(--color-border-2);
+  border-radius: var(--border-radius-medium);
+  padding: 5px;
+  box-sizing: border-box;
+  background: var(--color-bg-5);
+  .toolSlider {
+    padding-left: 5px;
+    padding-right: 5px;
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: space-between;
+    align-items: center;
+    height: 25px;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--border-radius-medium) var(--border-radius-medium) 0 0;
+    
+    .toolSplitLine {
+      height: 16px;
+      border: 1px solid var(--color-border-2);
+    }
+    .iconDangerHover {
+      color: rgb(var(--red-6));
+    }
+    .iconSuccessHover {
+      color: rgb(var(--green-6));
+    }
+    .iconHover {
+      color: var(--color-text-1);
+      cursor: pointer;
+      &:hover {
+        color: var(--color-neutral-6);
+      }
+    }
+  }
+  .editContainer {
+    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+    border-right: 1px solid var(--color-border-2);
+    display: flex;
+    border-radius: 0 0 var(--border-radius-medium) var(--border-radius-medium);
+    .leftBox {
+      width: 40px;
+      height: 100%;
+      border: 1px solid var(--color-neutral-2);
+      #leftNum {
+        text-align: right;
+        overflow: hidden;
+        padding: 3px 2px;
+        height: 100%;
+        line-height: 22px;
+        font-size: 13px;
+        color: var(--color-neutral-8);
+        font-weight: bold;
+        resize: none;
+        outline: none;
+        border: 0;
+        background: var(--color-neutral-1);
+        box-sizing: border-box;
+        font-family: 微软雅黑;
+      }
+    }
+    #rightNum {
+      background: var(--color-bg-2);
+      color: var(--color-neutral-10);
+      white-space: nowrap;
+      height: 100%;
+      padding: 3px;
+      line-height: 22px;
+      box-sizing: border-box;
+      resize: none;
+      border: 0;
+      flex: 1;
+      overflow: auto;
+      font-family: 微软雅黑;
+      position: relative;
+
+      &::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--color-neutral-4);
+        border-radius: 6px;
+      }
+  
+      &:focus-visible {
+        outline: none;
+      }
+  
+      &:hover {
+        border: 0;
+      }
+  
+      &:focus {
+        border: 0;
+      }
+    }
+  }
+  #console {
+    padding: 12px;
+    box-sizing: border-box;
+    height: calc(20% - 5px);
+    margin-top: 5px;
+    width: 100%;
+    background: var(--color-bg-2);
+    border-radius: var(--border-radius-medium);
+    border: 1px solid var(--color-border-2);
+    overflow: auto;
+    font-family: 微软雅黑;
+    text-align: left;
+  }
+}
+
+// 添加错误标注相关样式
+:global {
+  .json-error-marker {
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .json-error-underline {
+    width: 100px; // 默认宽度，会在JS中动态调整
+  }
+}

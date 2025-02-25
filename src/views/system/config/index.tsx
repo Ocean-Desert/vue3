@@ -9,7 +9,7 @@ export default defineComponent(() => {
   const { t } = useI18n()
   const appStore = useAppStore()
   const size = computed(() => appStore.size)
-  const searchOptions = ref<FormSpace.Options>({
+  const searchOptions = computed<FormSpace.Options>(() => ({
     form: { layout: 'horizontal', size: size.value },
     btns: { hide: false },
     columns: [{
@@ -26,7 +26,7 @@ export default defineComponent(() => {
       field: 'type',
       options: [{ label: t('config.index.053560-3'), value: false }, { label: t('config.index.053560-4'), value: true }]
     }]
-  })
+  }))
   const columns = computed<TableSpace.Columns[]>(() => ([{
     type: 'default',
     props: {
@@ -70,7 +70,7 @@ export default defineComponent(() => {
       align: 'center',
     }
   }]))
-  const formOptions = ref<FormSpace.Options>({
+  const formOptions = computed<FormSpace.Options>(() => ({
     form: { size: size.value },
     btns: { hide: true },
     columns: [{
@@ -109,7 +109,7 @@ export default defineComponent(() => {
       field: 'remark',
       props: { allowClear: true }
     }]
-  })
+  }))
   return () => (
     <>
       <GenericComment

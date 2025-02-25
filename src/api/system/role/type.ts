@@ -1,7 +1,7 @@
-import { TableData } from '@arco-design/web-vue'
+import type { BaseEntity, BaseEntityParams } from '@/api/common/type'
 import { SysMenu } from '../menus/type'
 
-export interface SysRole extends TableData {
+export interface SysRole extends BaseEntity {
   id?: number
   roleKey?: string
   roleName?: string
@@ -12,7 +12,7 @@ export interface SysRole extends TableData {
   menuList?: SysMenu[]
 }
 
-export interface SysRoleParam extends ApiSpace.PageParams {
+export interface SysRoleParam extends BaseEntityParams {
   id?: number
   roleKey?: string
   roleName?: string

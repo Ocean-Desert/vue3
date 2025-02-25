@@ -1,6 +1,7 @@
+import type { BaseEntity, BaseEntityParams } from '@/api/common/type'
 import { TableData } from '@arco-design/web-vue'
 
-export interface SysConfig extends TableData {
+export interface SysConfig extends BaseEntity {
   id?: number
   name?: string
   key?: string
@@ -9,7 +10,7 @@ export interface SysConfig extends TableData {
   remark?: string
 }
 
-export interface SysConfigParams extends ApiSpace.PageParams {
+export interface SysConfigParams extends BaseEntityParams {
   name?: string
   key?: string
   type?: boolean

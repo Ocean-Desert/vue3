@@ -29,7 +29,7 @@ export default defineComponent((props: Props, context: SetupContext) => {
             allowClear={true}
             placeholder={t('global.search.tip.input') + column.label}
             modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
-            onUpdate:modelValue={(value: any) => valueChange(value, column.field)}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
             size={size.value}
             {...column.props as Arco.InputInstance['$props']}
           >
@@ -41,7 +41,7 @@ export default defineComponent((props: Props, context: SetupContext) => {
           <a-input-number
             placeholder={t('global.search.tip.input') + column.label}
             modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
-            onUpdate:modelValue={(value: any) => valueChange(value, column.field)}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
             size={size.value}
             {...column.props as Arco.InputNumberInstance['$props']}
           >
@@ -54,7 +54,7 @@ export default defineComponent((props: Props, context: SetupContext) => {
             allowClear={true}
             placeholder={t('global.search.tip.input') + column.label}
             modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
-            onUpdate:modelValue={(value: any) => valueChange(value, column.field)}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
             {...column.props as Arco.TextareaInstance['$props']}
           >
             {{ ...column.slots }}
@@ -67,23 +67,13 @@ export default defineComponent((props: Props, context: SetupContext) => {
             allowClear={true}
             placeholder={t('global.search.tip.select') + column.label}
             modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
-            onUpdate:modelValue={(value: any) => valueChange(value, column.field)}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
             options={column.options as Arco.SelectInstance['$props']['options']}
             size={size.value}
             {...column.props as Arco.SelectInstance['$props']}
           >
             {{ ...column.slots }}
           </a-select>
-        )
-      case 'upload':
-        return (
-          <a-upload
-            modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
-            onUpdate:modelValue={(value: any) => valueChange(value, column.field)}
-            {...column.props as Arco.UploadInstance['$props']}
-          >
-            {{ ...column.slots }}
-          </a-upload>
         )
       case 'cascader':
         checkOptions(column)
@@ -92,7 +82,7 @@ export default defineComponent((props: Props, context: SetupContext) => {
             allowClear={true}
             placeholder={t('global.search.tip.select') + column.label}
             modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
-            onUpdate:modelValue={(value: any) => valueChange(value, column.field)}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
             options={column.options as Arco.CascaderInstance['$props']['options']}
             size={size.value}
             {...column.props as Arco.CascaderInstance['$props']}
@@ -106,8 +96,7 @@ export default defineComponent((props: Props, context: SetupContext) => {
             allowClear={true}
             placeholder={t('global.search.tip.select') + column.label}
             modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
-            onUpdate:modelValue={(value: any) => valueChange(value, column.field)}
-            data={column.data as Arco.TreeSelectInstance['$props']['data']}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
             size={size.value}
             {...column.props as Arco.TreeSelectInstance['$props']}
           >
@@ -119,7 +108,7 @@ export default defineComponent((props: Props, context: SetupContext) => {
         return (
           <a-radio-group
             modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
-            onUpdate:modelValue={(value: any) => valueChange(value, column.field)}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
             options={column.options as Arco.RadioGroupInstance['$props']['options']}
             size={size.value}
             {...column.props as Arco.RadioGroupInstance['$props']}
@@ -132,7 +121,7 @@ export default defineComponent((props: Props, context: SetupContext) => {
         return (
           <a-checkbox-group
             modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
-            onUpdate:modelValue={(value: any) => valueChange(value, column.field)}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
             options={column.options as Arco.CheckboxGroupInstance['$props']['options']}
             {...column.props as Arco.CheckboxGroupInstance['$props']}
           >
@@ -145,12 +134,72 @@ export default defineComponent((props: Props, context: SetupContext) => {
             allowClear={true}
             placeholder={t('global.search.tip.select') + column.label}
             modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
-            onUpdate:modelValue={(value: any) => valueChange(value, column.field)}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
             size={size.value}
             {...column.props as Arco.DatePickerInstance['$props']}
           >
             {{ ...column.slots }}
           </a-date-picker>
+        )
+      case 'month-picker':
+        return (
+          <a-month-picker
+            placeholder={t('global.form.tip.select') + column.label}
+            modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
+            size={size.value}
+            {...column.props as Arco.MonthPickerInstance['$props']}
+          >
+            {{ ...column.slots }}
+          </a-month-picker>
+        )
+      case 'year-picker':
+        return (
+          <a-year-picker
+            placeholder={t('global.form.tip.select') + column.label}
+            modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
+            size={size.value}
+            {...column.props as Arco.MonthPickerInstance['$props']}
+          >
+            {{ ...column.slots }}
+          </a-year-picker>
+        )
+      case 'quarter-picker':
+        return (
+          <a-quarter-picker
+            placeholder={t('global.form.tip.select') + column.label}
+            modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
+            size={size.value}
+            {...column.props as Arco.QuarterPickerInstance['$props']}
+          >
+            {{ ...column.slots }}
+          </a-quarter-picker>
+        )
+      case 'week-picker':
+        return (
+          <a-week-picker
+            placeholder={t('global.form.tip.select') + column.label}
+            modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
+            size={size.value}
+            {...column.props as Arco.WeekPickerInstance['$props']}
+          >
+            {{ ...column.slots }}
+          </a-week-picker>
+        )
+      case 'range-picker':
+        return (
+          <a-range-picker
+            placeholder={t('global.form.tip.select') + column.label}
+            modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
+            size={size.value}
+            {...column.props as Arco.RangePickerInstance['$props']}
+          >
+            {{ ...column.slots }}
+          </a-range-picker>
         )
       case 'time-picker':
         return (
@@ -158,7 +207,7 @@ export default defineComponent((props: Props, context: SetupContext) => {
             allowClear={true}
             placeholder={t('global.search.tip.select') + column.label}
             modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
-            onUpdate:modelValue={(value: any) => valueChange(value, column.field)}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
             size={size.value}
             {...column.props as Arco.TimePickerInstance['$props']}
           >
@@ -170,7 +219,7 @@ export default defineComponent((props: Props, context: SetupContext) => {
           <a-rate
             allowClear={true}
             modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
-            onUpdate:modelValue={(value: any) => valueChange(value, column.field)}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
             {...column.props as Arco.RateInstance['$props']}
           >
             {{ ...column.slots }}
@@ -180,7 +229,7 @@ export default defineComponent((props: Props, context: SetupContext) => {
         return (
           <a-switch
             modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
-            onUpdate:modelValue={(value: any) => valueChange(value, column.field)}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
             size={size.value}
             {...column.props as Arco.SwitchInstance['$props']}
           >
@@ -191,7 +240,7 @@ export default defineComponent((props: Props, context: SetupContext) => {
         return (
           <a-slider
             modelValue={props.modelValue[column.field as keyof typeof props.modelValue]}
-            onUpdate:modelValue={(value: any) => valueChange(value, column.field)}
+            onUpdate:modelValue={(value: any) => valueChange(value, column.field, column.ignore)}
             {...column.props as Arco.SliderInstance['$props']}
           >
             {{ ...column.slots }}
@@ -201,8 +250,8 @@ export default defineComponent((props: Props, context: SetupContext) => {
         return column.render && column.render(props.modelValue[column.field as keyof typeof props.modelValue])
     }
   }
-  const valueChange = (value: any, field: string) => {
-    emit('update:modelValue', Object.assign(props.modelValue, { [field]: value }))
+  const valueChange = (value: any, field: string, ignore = false) => {
+    emit('update:modelValue', ignore? props.modelValue : {...props.modelValue, [field]: value })
   }
   const onSearch = () => {
     emit('search')

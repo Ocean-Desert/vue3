@@ -1,7 +1,7 @@
 export default {
   'login.index.935518-0': 'log on user',
   'login.index.935518-1': 'Login status',
-  'login.index.935518-2': 'login time',
+  'login.index.935518-2': 'auth time',
   'login.index.935518-3': 'User account',
   'login.index.935518-4': 'Belonging place',
   'login.index.935518-5': 'browser',

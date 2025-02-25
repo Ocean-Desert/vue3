@@ -10,13 +10,14 @@ import dayjs from 'dayjs'
 import { isArray } from '@/utils/is'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/store'
+import { useCssVar } from '@vueuse/core'
 
 export default defineComponent(() => {
   const { t } = useI18n()
   const appSotre = useAppStore()
   const size = computed(() => appSotre.size)
   useSseService({
-    url: '/api/monitor/server/connect',
+    url: import.meta.env.VITE_API_CONTEXT_PATH + '/monitor/server/connect',
     onopen: () => {
       fetchData()
     },
@@ -79,15 +80,21 @@ export default defineComponent(() => {
     soundCard.value = data?.soundCard[0]
   }
   const buildEchart = () => {
-    const date = dayjs(new Date()).format('HH:mm:ss')
-    if (dateData.value.length > 5) {
+    const date = dayjs().format('HH:mm:ss')
+    const maxPoints = 30 // 最多显示30个点
+
+    if (dateData.value.length >= maxPoints) {
       dateData.value.shift()
       bytesRecv.value.shift()
       bytesSent.value.shift()
     }
+
     dateData.value.push(date)
-    networkData.value && bytesRecv.value.push(networkData.value.bytesRecv / 1024)
-    networkData.value && bytesSent.value.push(networkData?.value.bytesSent / 1024)
+    if (networkData.value) {
+      // 转换为 KB/s
+      bytesRecv.value.push(+(networkData.value.bytesRecv / 1024).toFixed(2))
+      bytesSent.value.push(+(networkData.value.bytesSent / 1024).toFixed(2))
+    }
   }
   const changeNetwork = () => {
     dateData.value = []
@@ -95,6 +102,15 @@ export default defineComponent(() => {
     bytesSent.value = []
     networkData.value = networkInfo[key.value]
   }
+  const greenColor = useCssVar('--green-6', document.documentElement)
+  const orangeColor = useCssVar('--orange-6', document.documentElement)
+  // 获取主题色并转换为 RGB 格式
+  const getRgbColor = (cssVar: string, opacity: number = 1) => {
+    const color = useCssVar(cssVar, document.documentElement)
+    // 假设 CSS 变量值是 "255, 128, 0" 这样的格式
+    return `rgba(${color.value || '0, 0, 0'}, ${opacity})`
+  }
+
   const { chartOption } = useChartOption((isDark) => {
     return {
       tooltip: {
@@ -107,52 +123,83 @@ export default defineComponent(() => {
             </div>
             <div style="overflow: hidden;">
               <div style="float: left;">
-              <span style="display: inline-block; margin-right: 5px; border-radius: 50%; width: 10px; height: 10px;background-color: rgb(var(--orange-6));"></span>
+                <span style="display: inline-block; margin-right: 5px; border-radius: 50%; width: 10px; height: 10px;background-color: rgb(var(--orange-6));"></span>
                 ${t('views.server.network.bytesSent')}：
               </div>
-              <div style="float: right;">${Number(params[1].data).toFixed(2)} KB/s</div>
+              <div style="float: right;">${convertBytes(params[1].data)}/s</div>
             </div>
             <div style="overflow: hidden;">
               <div style="float: left;">
-              <span style="display: inline-block; margin-right: 5px; border-radius: 50%; width: 10px; height: 10px;background-color: rgb(var(--green-6));"></span>
+                <span style="display: inline-block; margin-right: 5px; border-radius: 50%; width: 10px; height: 10px;background-color: rgb(var(--green-6));"></span>
                 ${t('views.server.network.bytesRecv')}：
               </div>
-              <div style="float: right;">${Number(params[0].data).toFixed(2)} KB/s</div>
+              <div style="float: right;">${convertBytes(params[0].data)}/s</div>
             </div>
           </div>`
         }
       },
-      legend: {
-        show: false,
-        data: [t('views.server.network.bytesRecv'), t('views.server.network.bytesSent')]
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
       },
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: dateData.value
+        data: dateData.value,
+        axisLabel: {
+          formatter: (value: string) => value.substring(value.indexOf(' ') + 1)
+        },
+        axisTick: { show: false },
+        axisLine: { show: false },
+        axisPointer: {
+          snap: true,
+          lineStyle: {
+            type: 'solid'
+          }
+        }
       },
       yAxis: {
-        name: t('views.server.network.unit') + ':KB/s',
         type: 'value',
+        name: t('views.server.network.unit'),
+        axisLabel: {
+          formatter: (value: number) => convertBytes(value)
+        },
+        splitLine: {
+          lineStyle: {
+            type: 'dashed'
+          }
+        }
       },
       series: [
         {
           name: t('views.server.network.bytesRecv'),
-          data: bytesRecv.value,
           type: 'line',
           smooth: true,
+          symbol: 'none',
+          sampling: 'average',
+          itemStyle: {
+            color: 'rgb(var(--green-6))'
+          },
           areaStyle: {
             color: '#00b42a'
-          }
+          },
+          data: bytesRecv.value
         },
         {
           name: t('views.server.network.bytesSent'),
-          data: bytesSent.value,
           type: 'line',
           smooth: true,
+          symbol: 'none',
+          sampling: 'average',
+          itemStyle: {
+            color: 'rgb(var(--orange-6))'
+          },
           areaStyle: {
             color: '#ff7d00'
-          }
+          },
+          data: bytesSent.value
         }
       ]
     }

@@ -10,7 +10,7 @@ import { SysDictData } from '@/api/system/dict/type'
 import BasicInformation from './components/basic-information'
 import SecuritySettings from './components/security-settings'
 import { useFileSystemAccess } from '@vueuse/core'
-import { useUpload } from '@/hooks/options'
+import { useCustomUpload } from '@/hooks/options'
 import { UploadOptions } from '@/api/common/type'
 import { useI18n } from 'vue-i18n'
 import useUser from '@/hooks/user'
@@ -54,16 +54,16 @@ export default defineComponent(() => {
       }],
       excludeAcceptAllOption: true
     })
-    if (isSupported) {
+    if (isSupported.value) {
       await open()
       const fileItem: FileItem = { uid: uuid(), file: file.value }
-      const { imageRequest } = useUpload(async (form: FormData, options?: UploadOptions) => await upload(form, options))
+      const { imageRequest } = useCustomUpload(async (form: FormData, options?: UploadOptions) => await upload(form, options))
       imageRequest({
         fileItem,
         onProgress: (percent) => {},
         onSuccess: (response) => {
           Message.success(response.msg)
-          updateUserAvatar(response.data[0].path)
+          updateUserAvatar(response.data.path)
         },
         onError: (error) => {},
       })
@@ -89,7 +89,7 @@ export default defineComponent(() => {
           <a-space size={size.value} direction="vertical" align="center">
             <a-avatar triggerType="mask" size={64} onClick={onChangeAvatar}>
               {{
-                'default': () => <img alt="avatar" src={userInfoData.value?.avatar} />,
+                'default': () => userInfoData.value?.avatar ? <img alt="avatar" src={userInfoData.value?.avatar} /> : <icon-user />,
                 'trigger-icon': () => <icon-edit />
               }}
             </a-avatar>

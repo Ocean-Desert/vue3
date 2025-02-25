@@ -1,6 +1,6 @@
-import { TableData } from '@arco-design/web-vue'
+import type { BaseEntity, BaseEntityParams } from '@/api/common/type'
 
-export interface SysLogininfo extends TableData {
+export interface SysLogininfo extends BaseEntity {
   id?: number
   username?: string
   ipaddr?: string
@@ -15,7 +15,7 @@ export interface SysLogininfo extends TableData {
   params?: any
 }
 
-export interface SysLogininfoParams extends ApiSpace.PageParams {
+export interface SysLogininfoParams extends BaseEntityParams {
   username?: string
   status?: string
   params?: any

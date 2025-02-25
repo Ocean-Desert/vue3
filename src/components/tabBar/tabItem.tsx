@@ -1,4 +1,4 @@
-import useTabBarStore from '@/store/modules/tabBar'
+import { useTabBarStore } from '@/store'
 import style from './index.module.scss'
 import { TagProps } from '@/store/modules/tabBar/type'
 import { PropType, computed, defineComponent, withModifiers } from 'vue'

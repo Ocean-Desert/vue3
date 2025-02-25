@@ -3,6 +3,7 @@ import style from './index.module.scss'
 import { renderDocx } from '@/utils/preview'
 import { PreviewStrategyManager } from './strategy'
 import '@vue-office/excel/lib/index.css'
+import { getFileExtension } from '@/utils'
 
 
 interface PreviewProps {
@@ -19,13 +20,6 @@ export default defineComponent((props: PreviewProps) => {
     if (fileExtension && buffer && previewRef.value) {
       manager.preview(buffer, previewRef.value, getFileExtension(fileName))
     }
-  }
-  const getFileExtension = (file: string | undefined): string => {
-    const index = file?.lastIndexOf('.')
-    if (!index || index === -1) {
-      return ''
-    }
-    return (file as string).slice(index + 1)
   }
   onMounted(() => {
     switchPreviewStrategy()

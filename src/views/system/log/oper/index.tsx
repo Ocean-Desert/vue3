@@ -19,7 +19,7 @@ export default defineComponent(() => {
   const genericRef = ref<GenericInstance>()
   const model = ref<SysLog>()
   const searchModel = ref<SysLogParams>({})
-  const { dateRange } = useDateRange(searchModel.value)
+  const { dateRange } = useDateRange(searchModel)
   const permission = ['system:operlog:del']
   const details = computed(() => (
     [{

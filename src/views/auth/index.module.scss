@@ -130,3 +130,35 @@
   text-align: center;
   margin-top: 16px;
 }
+
+.captchaInput {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  :global(.arco-input-wrapper) {
+    flex: 1;
+  }
+  
+  :global(.arco-image) {
+    width: 100px;
+    height: 32px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+}
+
+.formSwitch {
+  text-align: center;
+  margin-top: 16px;
+  
+  :global(.arco-link) {
+    color: rgb(var(--primary-6));
+    font-size: 14px;
+    transition: color 0.2s;
+    
+    &:hover {
+      color: rgb(var(--primary-5));
+    }
+  }
+}

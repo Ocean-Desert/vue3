@@ -1,12 +1,12 @@
-import { TableData } from '@arco-design/web-vue'
+import type { BaseEntity, BaseEntityParams } from '@/api/common/type'
 
-export interface SysDictTypeParams extends ApiSpace.PageParams {
+export interface SysDictTypeParams extends BaseEntityParams {
   dictName?: string
   dictType?: string
   enabled?: boolean
 }
 
-export interface SysDictType extends TableData {
+export interface SysDictType extends BaseEntity {
   dictCode?: number
   dictName?: string
   dictType?: string
@@ -14,7 +14,7 @@ export interface SysDictType extends TableData {
   enabled?: boolean
 }
 
-export interface SysDictDataParams extends ApiSpace.PageParams {
+export interface SysDictDataParams extends BaseEntityParams {
   dictLabel?: string
   dictValue?: string
   dictType?: string
@@ -22,7 +22,7 @@ export interface SysDictDataParams extends ApiSpace.PageParams {
   enabled?: boolean
 }
 
-export interface SysDictData extends TableData {
+export interface SysDictData extends BaseEntity {
   id?: number
   dictSort?: number
   dictLabel?: string

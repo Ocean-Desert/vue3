@@ -6,6 +6,7 @@ const USER: AppRouteRecordRaw = {
   path: '/user',
   name: 'profile',
   component: Layout,
+  redirect: '/user/profile',
   meta: {
     sort: 0,
     requiresAuth: false,

@@ -1,11 +1,10 @@
 import type { Router, LocationQueryRaw } from 'vue-router'
-import NProgress from 'nprogress'
 import { useUserStore } from '@/store'
 import { isLogin } from '@/utils/auth'
+import { AuthName } from '../constant'
 
 const setupUserLoginInfoGuard = (router: Router) => {
   router.beforeEach(async (to, from, next) => {
-    NProgress.start()
     const userStore = useUserStore()
     if (isLogin()) {
       if (userStore?.roles?.length) {
@@ -17,7 +16,7 @@ const setupUserLoginInfoGuard = (router: Router) => {
         } catch (error) {
           await userStore.logout()
           next({
-            name: 'login',
+            name: AuthName,
             query: {
               redirect: to.name,
               ...to.query,
@@ -26,12 +25,12 @@ const setupUserLoginInfoGuard = (router: Router) => {
         }
       }
     } else {
-      if (to.name === 'login') {
+      if (to.name === AuthName) {
         next()
         return
       }
       next({
-        name: 'login',
+        name: AuthName,
         query: {
           redirect: to.name,
           ...to.query,

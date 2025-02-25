@@ -1,11 +1,10 @@
 import { computed } from 'vue'
 import { useAppStore } from '@/store'
 import appClientMenus from '@/router/menus/index'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import { RouteRecordNormalized, RouteRecordRaw } from 'vue-router'
 import usePermission from '@/hooks/permission'
 import { buildRouters } from '@/hooks/router'
-
 
 const useMenuTree = () => {
   const appStore = useAppStore()

@@ -1,6 +1,6 @@
-import { TableData } from '@arco-design/web-vue'
+import type { BaseEntity, BaseEntityParams } from '@/api/common/type'
 
-export interface SysLog extends TableData {
+export interface SysLog extends BaseEntity {
   id?: number
   operName?: string
   ipaddr?: string
@@ -19,7 +19,7 @@ export interface SysLog extends TableData {
   params?: object
 }
 
-export interface SysLogParams extends ApiSpace.PageParams {
+export interface SysLogParams extends BaseEntityParams {
   operName?: string
   operationDesc?: string
   method?: string

@@ -10,6 +10,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { LOCALE_OPTIONS } from '@/locale'
 import useLocale from '@/hooks/locale'
+import { getAssetsFile } from '@/utils'
 
 export default defineComponent(() => {
   const appStore = useAppStore()
@@ -127,7 +128,9 @@ export default defineComponent(() => {
               {{
                 default: () =>
                   <a-avatar size={32} style="cursor: pointer;">
-                    <img src={userDetails.value.avatar}></img>
+                    {
+                      userDetails.value.avatar ? <img src={userDetails.value.avatar}></img> : <icon-user />
+                    }
                   </a-avatar>,
                 content: () =>
                   <>

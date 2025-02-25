@@ -5,12 +5,13 @@ import vueJsx from '@vitejs/plugin-vue-jsx' //tsx插件引入
 import AutoImport from 'unplugin-auto-import/vite' //自动引入ref,reactive等等等
 // 配置antd-v按需加载
 import Components from 'unplugin-vue-components/vite'
-import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
+import { ArcoResolver } from 'unplugin-vue-components/resolvers'
 import path from 'path'
 import { resolve, join } from 'path'
 import { fileURLToPath, URL } from 'node:url'
 import topLevelAwait from 'vite-plugin-top-level-await'
 import prismjs from 'vite-plugin-prismjs'
+import { vitePluginForArco } from '@arco-plugins/vite-vue'
 // import legacy from '@vitejs/plugin-legacy'
 
 // https://vitejs.dev/config/
@@ -31,8 +32,9 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
       //   //targets里可指定兼容到某一特定版本，默认为[ "defaults", "not IE 11"]；
       //   targets: ["chrome 80", "defaults", "not IE 11"],
       // }),
+
       prismjs({
-        languages: ['javascript', 'css', 'html', 'json', 'typescript', 'java', 'yaml', 'sql', 'xml'],
+        languages: ['javascript', 'css', 'html', 'json', 'typescript', 'java', 'yaml', 'sql', 'xml', 'tsx'],
         plugins: [
           'toolbar',
           'show-language',
@@ -65,11 +67,15 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
       }),
       Components({
         resolvers: [
-          AntDesignVueResolver({
-            importStyle: 'less' //修改antdv主题色
+          ArcoResolver({
+            resolveIcons: true,
+            sideEffect: true
           })
         ]
-      })
+      }),
+      vitePluginForArco({
+        varsInjectScope: ['*'],
+      }),
     ],
     preview: {
       host: true, // 监听所有地址
@@ -77,7 +83,7 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
       proxy: {
         //配置自定义代理规则
         // 字符串简写写法
-        '/api': {
+        [env.VITE_API_CONTEXT_PATH]: {
           target: env.VITE_API_BASE_URL + env.VITE_API_CONTEXT_PATH,
           changeOrigin: true, //是否跨域
           rewrite: path => path.replace(/^\/api/, '')
@@ -94,7 +100,7 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
       proxy: {
         //配置自定义代理规则
         // 字符串简写写法
-        '/api': {
+        [env.VITE_API_CONTEXT_PATH]: {
           target: env.VITE_API_BASE_URL + env.VITE_API_CONTEXT_PATH,
           changeOrigin: true, //是否跨域
           rewrite: path => path.replace(/^\/api/, '')
@@ -123,23 +129,12 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
       // 全局变量+全局引入less+配置antdv主题色
       preprocessorOptions: {
         scss: {
+          api: 'modern-compiler',
           requireModuleExtension: true,
           javascriptEnabled: true,
           // 全局变量使用：@primary-color
           modifyVars: {
-            'primary-color': '#1890ff', // 全局主色
-            'link-color': ' #1890ff', // 链接色
-            'success-color': ' #52c41a', // 成功色
-            'warning-color': ' #faad14', // 警告色
-            'error-color': ' #f5222d', // 错误色
-            'font-size-base': ' 14px', // 主字号
-            'heading-color': ' rgba(0, 0, 0, 0.85)', // 标题色
-            'text-color': ' rgba(0, 0, 0, 0.65)', // 主文本色
-            'text-color-secondary': ' rgba(0, 0, 0, 0.45)', // 次文本色
-            'disabled-color': ' rgba(0, 0, 0, 0.25)', // 失效色
-            'border-radius-base': ' 2px', // 组件/浮层圆角
-            'border-color-base': ' #d9d9d9', // 边框色
-            'box-shadow-base': ' 0 2px 8px rgba(0, 0, 0, 0.15)' // 浮层阴影
+            '--red-1': '#f85959',
           }
         }
       }

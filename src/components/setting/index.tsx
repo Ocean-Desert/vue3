@@ -6,7 +6,7 @@ import Block, { OptionsProps } from './block'
 import { useI18n } from 'vue-i18n'
 import { useClipboard } from '@vueuse/core'
 import { Message } from '@arco-design/web-vue'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import type { AppState } from '@/store/modules/app/type'
 
 export default defineComponent((props: Record<string, any>, { emit }: SetupContext) => {
@@ -26,7 +26,6 @@ export default defineComponent((props: Record<string, any>, { emit }: SetupConte
     const excludePrototype: { key: keyof AppState; defaultValue: any }[] = [
       { key: 'security', defaultValue: { publicKey: '', privateKey: '' } },
       { key: 'userMenus', defaultValue: [] },
-      { key: 'routeReady', defaultValue: false },
       { key: 'publicKey', defaultValue: '' },
     ]
     const copyValue = cloneDeep(appStore.$state) as AppState

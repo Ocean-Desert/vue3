@@ -3,6 +3,13 @@ import style from './index.module.scss'
 import { useAppStore } from '@/store'
 import { AppState } from '@/store/modules/app/type'
 import { SelectInstance } from '@arco-design/web-vue'
+import { useRouter } from 'vue-router'
+import { removeRouteListener } from '@/utils/routeListener'
+import appClientMenus from '@/router/menus'
+import { useTabBarStore } from '@/store'
+import { LayoutName } from '@/router/constant'
+import type { RouteRecordName, RouteRecordRaw } from 'vue-router'
+import type { SysMenu } from '@/api/system/menus/type'
 
 export interface OptionsProps {
   name: string
@@ -20,17 +27,49 @@ interface Props {
 }
 
 export default defineComponent((props: Props) => {
+  const router = useRouter()
+  const tabBarStore = useTabBarStore()
   const appStore = useAppStore()
   const size = computed(() => appStore.size)
+
+  const removeRoutes = (routesToBeRemoved: SysMenu[] | RouteRecordRaw[]) => {
+    removeRouteListener()
+    const routes = router.getRoutes()
+    routes.forEach(item => {
+      if (routesToBeRemoved.find(route => route.name === item.name)) {
+        router.removeRoute(item.name as RouteRecordName)
+      }
+    })
+  }
   const handleChange = (key: keyof AppState, value: unknown) => {
-    if (key === 'colorWeak') {
-      document.body.style.filter = value ? 'invert(80%)' : 'none'
-    }
-    if (key === 'topMenu') {
-      appStore.updateAppSetting({ menuCollapse: false })
+    switch (key) {
+      case 'menuFromServer': {
+        if (value) {
+          // 来自后台获取菜单
+          const routesToBeRemoved = appClientMenus
+          removeRoutes(routesToBeRemoved)
+        } else {
+          // 来自本地菜单
+          const routesToBeDel = [...appStore.getMenus]
+          appStore.clearUserMenus()
+          removeRoutes(routesToBeDel)
+        }
+        router.push({ name: LayoutName })
+        tabBarStore.resetTabList()
+        break
+      }
+      case 'colorWeak': {
+        document.body.style.filter = value ? 'invert(80%)' : 'none'
+        break
+      }
+      case 'topMenu': {
+        appStore.updateAppSetting({ menuCollapse: false })
+        break
+      }
     }
     appStore.updateAppSetting({ [key]: value })
   }
+
   return () => (
     <>
       <div class={style.block}>

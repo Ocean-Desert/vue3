@@ -3,7 +3,7 @@ import style from './index.module.scss'
 import { useAppStore } from '@/store'
 import { listenerRouteChange } from '@/utils/routeListener'
 import { RouteLocationNormalized } from 'vue-router'
-import useTabBarStore from '@/store/modules/tabBar'
+import { useTabBarStore } from '@/store'
 import TabItem from './tabItem'
 
 export default defineComponent(() => {

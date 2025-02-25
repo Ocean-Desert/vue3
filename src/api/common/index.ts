@@ -1,11 +1,27 @@
 import request from '@/utils/request'
-import type { Captcha, DownloadParams, EditPasswordParams, EditUserParams, LoginData, SysFile, UploadOptions } from './type'
+import type { Captcha, DownloadParams, EditPasswordParams, EditUserParams, LoginData, RegisterData, SysFile, UploadOptions } from './type'
 import { AxiosProgressEvent } from 'axios'
 import { UserInfo } from '@/store/modules/user/types'
 
 export const login = (data: LoginData) => {
   return request<unknown, Promise<ApiSpace.Result<string>>>({
     url: '/common/login',
+    method: 'post',
+    data,
+  })
+}
+
+export const sendEmailCode = (email: string) => {
+  return request<unknown, Promise<ApiSpace.Result<string>>>({
+    url: '/common/sendEmailCode',
+    method: 'get',
+    params: { email },
+  })
+}
+
+export const register = (data: RegisterData) => {
+  return request<unknown, Promise<ApiSpace.Result<string>>>({
+    url: '/common/register',
     method: 'post',
     data,
   })
@@ -42,7 +58,7 @@ export const userInfo = () => {
 export const upload = (
   file: FormData,
   options?: UploadOptions
-) => request<FormData, Promise<ApiSpace.Result<SysFile[]>>>({
+) => request<FormData, Promise<ApiSpace.Result<SysFile>>>({
   url: options?.action || '/file/upload',
   method: 'post',
   data: file,

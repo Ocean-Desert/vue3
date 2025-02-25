@@ -1,7 +1,7 @@
 import { TreeSelect } from '@/api/common/type'
-import { TableData } from '@arco-design/web-vue'
+import type { BaseEntity, BaseEntityParams } from '@/api/common/type'
 
-export interface SysMenu extends TableData {
+export interface SysMenu extends BaseEntity {
   id?: number
   parentId?: number
   name?: string
@@ -17,7 +17,7 @@ export interface SysMenu extends TableData {
   children?: SysMenu[]
 }
 
-export interface SysMenuParam extends TableData {
+export interface SysMenuParam extends BaseEntityParams {
   title?: string
   type?: string
   enabled?: boolean

@@ -1,5 +1,8 @@
 import { SysMenu } from '@/api/menus/type'
-import { RouteRecordRaw } from 'vue-router'
+import { LayoutName } from '@/router/constant'
+import { Router, RouteRecordName, RouteRecordRaw, useRouter } from 'vue-router'
+import usePermission from './permission'
+import { DYNAMIC_ROUTES } from '@/router/static'
 
 const modules: Record<string, any> = import.meta.glob('@/views/**/*.tsx')
 
@@ -25,6 +28,7 @@ const buildRouters = (data: SysMenu[]): RouteRecordRaw[] => {
   })
   return [...routers] as RouteRecordRaw[]
 }
+
 
 const routerChildren = (children: SysMenu[]) => buildRouters(children)
 

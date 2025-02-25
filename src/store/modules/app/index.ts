@@ -18,9 +18,6 @@ const useAppStore = defineStore('app', {
     getMenus(state: AppState): SysMenu[] {
       return state.userMenus
     },
-    getRouteReady(state: AppState): boolean {
-      return state.routeReady
-    }
   },
 
   actions: {
@@ -56,8 +53,7 @@ const useAppStore = defineStore('app', {
           closable: true,
         })
         const { data } = await menus()
-        this.userMenus = data
-        // addRouters(data)
+        this.userMenus = data as SysMenu[]
         notifyInstance = Notification.success({
           id: 'menuNotice',
           content: 'success',

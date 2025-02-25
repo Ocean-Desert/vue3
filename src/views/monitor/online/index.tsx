@@ -12,7 +12,7 @@ import { useAppStore } from '@/store'
 export default defineComponent(() => {
   const genericRef = ref<GenericInstance>()
   const searchModel = ref<SysUserOnlineParams>({})
-  const { dateRange } = useDateRange(searchModel.value)
+  const { dateRange } = useDateRange(searchModel)
   const { t } = useI18n()
   const appSotre = useAppStore()
   const size = computed(() => appSotre.size)

@@ -105,3 +105,9 @@ export const dictDataDelete = (id: number | string) => {
 
 export const dict = (dictType: string) => request<unknown, Promise<ApiSpace.Result<SysDictData[]>>>({ url: '/system/dict/type/' + dictType, method: 'get' })
 
+export const dictTypeOptionselect = () => {
+  return request<unknown, ApiSpace.Result<SysDictType[]>>({
+    url: '/system/dict/optionselect',
+    method: 'get',
+  })
+}

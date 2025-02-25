@@ -1,3 +1,4 @@
+import type { TableData } from '@arco-design/web-vue'
 import { AxiosProgressEvent } from 'axios'
 
 export interface LoginData {
@@ -5,6 +6,13 @@ export interface LoginData {
   password: string,
   captcha: string,
   uuid: string
+}
+
+export interface RegisterData {
+  username: string,
+  password: string,
+  email: string,
+  code: string
 }
 
 export interface TreeSelect {
@@ -23,14 +31,24 @@ export interface SysFile extends BaseEntity {
   name: string
 }
 
-export interface BaseEntity {
+export interface BaseEntityParams extends ApiSpace.PageParams, BaseEntity {}
+export interface TreeEntityParams extends ApiSpace.PageParams, TreeEntity {}
+
+export interface BaseEntity extends TableData {
   createTime?: string
   createBy?: string
   updateTime?: string
   updateBy?: string
   flag?: string
   remark?: string
-  params?: Map<string, any>
+  params?: object
+}
+
+export interface TreeEntity extends BaseEntity {
+  parentId?: number
+  parentName?: string
+  ancestors?: string
+  children?: TreeEntity[]
 }
 
 export type UploadOptions = {
