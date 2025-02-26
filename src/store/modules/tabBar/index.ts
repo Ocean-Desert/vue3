@@ -46,7 +46,20 @@ const useTabBarStore = defineStore('tabBar', {
       if (BAN_LIST.includes(route.name as string)) {
         return
       }
-      this.tagList.push(formatTag(route))
+      
+      // 检查是否已存在相同名称的标签，避免重复添加
+      const isDuplicate = this.tagList.some(tag => tag.name === route.name)
+      if (isDuplicate) {
+        // 如果已存在，更新该标签而不是添加新标签
+        const existingIndex = this.tagList.findIndex(tag => tag.name === route.name)
+        if (existingIndex > 0) { // 不更新首页标签
+          this.tagList[existingIndex] = formatTag(route)
+        }
+      } else {
+        // 如果不存在，添加新标签
+        this.tagList.push(formatTag(route))
+      }
+      
       if (route.meta.keepAlive) {
         this.cacheTabList.add(route.name as string)
       }

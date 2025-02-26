@@ -1,7 +1,7 @@
 import { RouteRecordRaw } from 'vue-router'
 import { LayoutName, REDIRECT_ROUTE_NAME } from '../constant'
 
-export const Layout = () => import('@/layout/index.tsx')
+export const Layout = () => import('@/layout/index')
 
 export const LAYOUT: RouteRecordRaw = {
   path: '/',

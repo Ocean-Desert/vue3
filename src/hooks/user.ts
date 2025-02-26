@@ -2,7 +2,7 @@ import { useUserStore } from "@/store"
 import { Message } from "@arco-design/web-vue"
 import { useRouter } from "vue-router"
 import { clearToken } from '@/utils/auth'
-import {AuthName} from "@/router/constant";
+import { AuthName } from '@/router/constant'
 
 export default () => {
   const router = useRouter()

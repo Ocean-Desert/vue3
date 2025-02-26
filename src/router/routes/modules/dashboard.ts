@@ -3,7 +3,7 @@ import { AppRouteRecordRaw } from '../type'
 const DASHBOARD: AppRouteRecordRaw = {
   name: 'dashboard',
   path: 'dashboard',
-  component: () => import('@/views/dashboard/index.tsx'),
+  component: () => import('@/views/dashboard/index'),
   meta: {
     id: 1,
     title: '首页',

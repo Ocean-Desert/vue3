@@ -54,12 +54,14 @@ export default defineComponent({
         try {
           await userStore.login(form)
           await appStore.initPublicKey()
-          
+          debugger  
           const { redirect, ...othersQuery } = router.currentRoute.value.query
+          const redirectTarget = redirect === LoadName ? 'dashboard' : (redirect || 'dashboard')
+          
           router.push({
             name: LoadName,
             query: {
-              redirect: redirect || LayoutName,
+              redirect: redirectTarget,
               ...othersQuery
             }
           })

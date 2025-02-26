@@ -26,16 +26,32 @@ export default defineComponent(() => {
   //   }
   // })
   const menuFromLocalInit = () => {
+    debugger
     addRoute(router, appClientMenus, LayoutName)
-    const toRoute = router.resolve(router.currentRoute.value.fullPath)
-    if (toRoute.matched.length > 1) {
-      router.push(router.currentRoute.value.fullPath)
-    } else {
-      router.push(NOT_FOUND)
+    
+    // 获取当前路由信息
+    const { query, fullPath } = router.currentRoute.value
+    
+    // 先尝试解析重定向路径
+    if (query.redirect) {
+      const redirectRoute = router.resolve(query.redirect as string)
+      if (redirectRoute.matched.length) {
+        return router.push(redirectRoute.fullPath)
+      }
     }
+
+    // 如果没有重定向或重定向无效，尝试解析当前路径
+    const currentRoute = router.resolve(fullPath)
+    if (currentRoute.matched.length) {
+      return router.push(fullPath)
+    }
+
+    // 如果当前路径也无效，跳转到404
+    router.push(NOT_FOUND)
   }
 
   const menuFromServerInit = async () => {
+    debugger
     try {
       if (!appStore.getMenus.length) await appStore.fetchMenus()
       const serverMenus = buildRouters(appStore.getMenus)
@@ -47,22 +63,44 @@ export default defineComponent(() => {
       await router.isReady()
 
       const { redirect, ...otherQuery } = router.currentRoute.value.query
+      
+      // 处理重定向参数
       if (redirect) {
-        // 重新解析路由,因为这时动态路由已经加载完成
-        const targetPath = router.resolve({ name: redirect as string })
+        // 防止redirect=load导致的循环
+        if (redirect === LayoutName) {
+          const dashboardRoute = router.resolve('dashboard')
+          if (dashboardRoute.matched.length) {
+            return router.push({
+              path: 'dashboard',
+              query: otherQuery
+            })
+          }
+        }
+        
+        // 尝试解析重定向路径
+        const targetPath = router.resolve(redirect as string)
         if (targetPath.matched.length) {
           return router.push({
-            name: redirect as string,
+            path: targetPath.path,
             query: otherQuery
           })
         }
       }
       
-      // 没有有效的重定向目标时跳转到首页
-      router.push({
-        name: LayoutName,
-        query: otherQuery
-      })
+      // 尝试解析当前路径
+      const { path, name } = router.currentRoute.value
+      if (name !== 'load') {
+        const targetRoute = router.resolve(name as string)
+        if (targetRoute.matched.length) {
+          return router.push({
+            path: path,
+            query: otherQuery
+          })
+        }
+      }
+
+      // 如果所有路径都无效，跳转到404
+      router.push(NOT_FOUND)
     } catch (error) {
       console.error('Failed to initialize menu', error)
       router.push(NOT_FOUND)
@@ -71,7 +109,13 @@ export default defineComponent(() => {
   const addRoute = (router: Router, routers: RouteRecordRaw[], routeName?: RouteRecordName): void => {
     routers.forEach((item: RouteRecordRaw) => {
       if (!router.hasRoute(item.name as RouteRecordName)) {
-        routeName ? router.addRoute(LayoutName, item) : router.addRoute(item)
+        // 修复类型错误问题
+        const routeRecordName = item.name as NonNullable<RouteRecordName>
+        if (routeName) {
+          router.addRoute(routeName, item)
+        } else {
+          router.addRoute(item)
+        }
       }
     })
   }

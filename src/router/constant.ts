@@ -8,7 +8,6 @@ export const NotFoundName = 'notFound'
 export const WHITE_LIST = [
   { name: NotFoundName, children: [] },
   { name: AuthName, children: [] },
-  { name: LoadName, children: [] },
 ]
 // LoginName
 export const INTERNAL = [
@@ -20,6 +19,7 @@ export const BASE = [
   { name: 'redirectWrapper', children: [] },
   { name: REDIRECT_ROUTE_NAME, children: [] },
   { name: LayoutName, children: [] },
+  { name: LoadName, children: [] },
 ]
 
 export const DEFAULT_ROUTE = {

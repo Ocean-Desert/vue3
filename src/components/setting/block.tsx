@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router'
 import { removeRouteListener } from '@/utils/routeListener'
 import appClientMenus from '@/router/menus'
 import { useTabBarStore } from '@/store'
-import { LayoutName } from '@/router/constant'
+import { LayoutName, LoadName } from '@/router/constant'
 import type { RouteRecordName, RouteRecordRaw } from 'vue-router'
 import type { SysMenu } from '@/api/system/menus/type'
 
@@ -37,7 +37,12 @@ export default defineComponent((props: Props) => {
     const routes = router.getRoutes()
     routes.forEach(item => {
       if (routesToBeRemoved.find(route => route.name === item.name)) {
-        router.removeRoute(item.name as RouteRecordName)
+        try {
+          const routeName = item.name as NonNullable<RouteRecordName>
+          router.removeRoute(routeName)
+        } catch (error) {
+          console.error(`Failed to remove route: ${String(item.name)}`, error)
+        }
       }
     })
   }
@@ -53,8 +58,16 @@ export default defineComponent((props: Props) => {
           const routesToBeDel = [...appStore.getMenus]
           appStore.clearUserMenus()
           removeRoutes(routesToBeDel)
+          
+          // 确保重置后重新加载静态路由
+          setTimeout(() => {
+            router.push({ 
+              name: LoadName,
+              query: { redirect: 'dashboard' }
+            })
+          }, 100)
         }
-        router.push({ name: LayoutName })
+        // 重置标签栏
         tabBarStore.resetTabList()
         break
       }
